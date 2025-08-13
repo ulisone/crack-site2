@@ -1,0 +1,52 @@
+# See https://help.github.com/articles/ignoring-files for more about ignoring files.
+
+# Bundler
+/.bundle/
+/vendor/bundle
+
+# Logs and temp files
+/log/*
+/tmp/*
+!/log/.keep
+!/tmp/.keep
+
+# Storage (Active Storage)
+/storage/*
+!/storage/.keep
+
+# Public assets
+/public/assets
+
+# Environment and tooling
+.byebug_history
+/.env
+/.env.*
+/.direnv
+/node_modules
+/yarn-error.log
+
+# macOS
+.DS_Store
+
+# Editors/IDEs
+.idea
+*.iml
+.vscode/*
+*.swp
+*.swo
+*~
+
+# RSpec / test artifacts
+/coverage/
+.rspec_status
+/spec/examples.txt
+
+# Rails credentials key (DO NOT COMMIT)
+config/master.key
+config/credentials/*.key
+
+# Tailwind builds source maps (keep built CSS tracked)
+app/assets/builds/*.map
+
+
+*.log
