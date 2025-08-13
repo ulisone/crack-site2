@@ -1,0 +1,175 @@
+<%= form_with model: [:admin, category], local: true, class: "space-y-6" do |form| %>
+  <% if category.errors.any? %>
+    <div class="bg-red-600 bg-opacity-20 border border-red-600 rounded-lg p-4">
+      <div class="flex">
+        <svg class="w-5 h-5 text-red-400 mr-2 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+        </svg>
+        <div>
+          <h3 class="text-sm font-medium text-red-300">
+            <%= pluralize(category.errors.count, "error") %> prohibited this category from being saved:
+          </h3>
+          <ul class="mt-2 text-sm text-red-200 list-disc list-inside">
+            <% category.errors.each do |error| %>
+              <li><%= error.full_message %></li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Main Form -->
+    <div class="lg:col-span-2 space-y-6">
+      <!-- Basic Information -->
+      <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+        <h3 class="text-lg font-semibold text-white mb-4">Category Information</h3>
+        
+        <div class="space-y-4">
+          <div>
+            <%= form.label :name, class: "block text-sm font-medium text-gray-300 mb-2" %>
+            <%= form.text_field :name, 
+                class: "w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent",
+                placeholder: "Enter category name" %>
+          </div>
+
+          <div>
+            <%= form.label :slug, "URL Slug", class: "block text-sm font-medium text-gray-300 mb-2" %>
+            <%= form.text_field :slug, 
+                class: "w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent",
+                placeholder: "url-friendly-name (leave blank to auto-generate)" %>
+            <p class="mt-1 text-xs text-gray-500">Used in URLs. Will be auto-generated from name if left blank.</p>
+          </div>
+
+          <div>
+            <%= form.label :description, class: "block text-sm font-medium text-gray-300 mb-2" %>
+            <%= form.text_area :description, rows: 4,
+                class: "w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent",
+                placeholder: "Describe what type of software belongs in this category..." %>
+          </div>
+
+          <div>
+            <%= form.label :position, "Display Order", class: "block text-sm font-medium text-gray-300 mb-2" %>
+            <%= form.number_field :position, 
+                class: "w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent",
+                placeholder: "1", min: 1 %>
+            <p class="mt-1 text-xs text-gray-500">Lower numbers appear first in category lists.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- SEO Settings -->
+      <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+        <h3 class="text-lg font-semibold text-white mb-4">SEO & Display Settings</h3>
+        
+        <div class="space-y-4">
+          <div>
+            <%= form.label :meta_title, "Page Title", class: "block text-sm font-medium text-gray-300 mb-2" %>
+            <%= form.text_field :meta_title, 
+                class: "w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent",
+                placeholder: "Custom page title (optional)" %>
+            <p class="mt-1 text-xs text-gray-500">If left blank, category name will be used.</p>
+          </div>
+
+          <div>
+            <%= form.label :meta_description, "Meta Description", class: "block text-sm font-medium text-gray-300 mb-2" %>
+            <%= form.text_area :meta_description, rows: 3,
+                class: "w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent",
+                placeholder: "Brief description for search engines (150-160 characters)" %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="lg:col-span-1 space-y-6">
+      <!-- Actions -->
+      <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+        <h3 class="text-lg font-semibold text-white mb-4">Actions</h3>
+        
+        <div class="space-y-3">
+          <%= form.submit category.persisted? ? "Update Category" : "Create Category", 
+              class: "w-full btn-primary" %>
+          
+          <% if category.persisted? %>
+            <%= link_to "View Category", root_path(category_id: category.id), 
+                class: "w-full btn-secondary text-center block",
+                target: "_blank" %>
+          <% end %>
+          
+          <%= link_to "Cancel", admin_categories_path, 
+              class: "w-full btn-secondary text-center block" %>
+          
+          <% if category.persisted? %>
+            <%= link_to "Delete Category", admin_category_path(category), 
+                method: :delete,
+                data: { 
+                  confirm: "Are you sure you want to delete '#{category.name}'? This will also affect all software in this category." 
+                },
+                class: "w-full bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-md transition-colors text-center block" %>
+          <% end %>
+        </div>
+      </div>
+
+      <% if category.persisted? %>
+        <!-- Statistics -->
+        <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+          <h3 class="text-lg font-semibold text-white mb-4">Statistics</h3>
+          <dl class="space-y-3">
+            <div>
+              <dt class="text-sm font-medium text-gray-400">Software Count</dt>
+              <dd class="text-2xl font-bold text-white"><%= category.softwares_count %></dd>
+            </div>
+            
+            <div>
+              <dt class="text-sm font-medium text-gray-400">Position</dt>
+              <dd class="text-sm text-gray-300">#<%= category.position %></dd>
+            </div>
+            
+            <div>
+              <dt class="text-sm font-medium text-gray-400">Created</dt>
+              <dd class="text-sm text-gray-300"><%= category.created_at.strftime("%B %d, %Y") %></dd>
+            </div>
+            
+            <div>
+              <dt class="text-sm font-medium text-gray-400">Last Updated</dt>
+              <dd class="text-sm text-gray-300"><%= category.updated_at.strftime("%B %d, %Y") %></dd>
+            </div>
+          </dl>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+          <h3 class="text-lg font-semibold text-white mb-4">Quick Links</h3>
+          <div class="space-y-2">
+            <%= link_to "View Software in this Category", 
+                admin_softwares_path(category_id: category.id), 
+                class: "block text-sm text-green-400 hover:text-green-300 transition-colors" %>
+            
+            <%= link_to "Add Software to this Category", 
+                new_admin_software_path(category_id: category.id), 
+                class: "block text-sm text-green-400 hover:text-green-300 transition-colors" %>
+            
+            <%= link_to "View Public Category Page", 
+                root_path(category_id: category.id), 
+                class: "block text-sm text-green-400 hover:text-green-300 transition-colors",
+                target: "_blank" %>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- Help -->
+      <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+        <h3 class="text-lg font-semibold text-white mb-4">Tips</h3>
+        <div class="text-sm text-gray-400 space-y-2">
+          <p>• Use clear, descriptive category names</p>
+          <p>• Keep descriptions concise but informative</p>
+          <p>• Use position numbers to control display order</p>
+          <p>• SEO fields help with search engine visibility</p>
+          <p>• URL slugs should be lowercase and hyphenated</p>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>

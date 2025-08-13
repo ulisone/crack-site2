@@ -1,0 +1,242 @@
+<% content_for :title, "#{@software.title} - Software Crackz" %>
+
+<!-- Breadcrumb -->
+<nav class="mb-6 text-sm">
+  <ol class="flex items-center space-x-2 text-gray-400">
+    <li>
+      <%= link_to "Home", root_path, class: "hover:text-green-400 transition-colors" %>
+    </li>
+    <li>/</li>
+    <li>
+      <%= link_to @software.category.name, root_path(category_id: @software.category.id), 
+          class: "hover:text-green-400 transition-colors" %>
+    </li>
+    <li>/</li>
+    <li class="text-gray-300"><%= @software.title %></li>
+  </ol>
+</nav>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+  <!-- Main Content -->
+  <div class="lg:col-span-2">
+    <!-- Software Header -->
+    <div class="mb-8">
+      <div class="flex items-start justify-between mb-4">
+        <div>
+          <h1 class="text-3xl font-bold text-white mb-2"><%= @software.title %></h1>
+          <div class="flex items-center space-x-4 text-sm text-gray-400">
+            <span class="bg-green-600 text-white px-2 py-1 rounded">
+              <%= @software.category.name %>
+            </span>
+            <span>v<%= @software.version %></span>
+            <% if @software.developer.present? %>
+              <span>by <%= @software.developer %></span>
+            <% end %>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Statistics -->
+      <div class="flex space-x-6 text-sm text-gray-400 mb-6">
+        <div class="flex items-center">
+          <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 011 1v1a1 1 0 01-1 1H4a1 1 0 01-1-1v-1zM3 7a1 1 0 011-1h12a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1V7zM4 3a1 1 0 000 2h12a1 1 0 100-2H4z" clip-rule="evenodd"/>
+          </svg>
+          <%= @software.downloads_count %> downloads
+        </div>
+        
+        <% if @software.file_size.present? %>
+          <div class="flex items-center">
+            <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h4a1 1 0 010 2H6.414l2.293 2.293a1 1 0 11-1.414 1.414L5 6.414V8a1 1 0 01-2 0V4zm9 1a1 1 0 010-2h4a1 1 0 011 1v4a1 1 0 01-2 0V6.414l-2.293 2.293a1 1 0 11-1.414-1.414L13.586 5H12zm-9 7a1 1 0 012 0v1.586l2.293-2.293a1 1 0 111.414 1.414L6.414 15H8a1 1 0 010 2H4a1 1 0 01-1-1v-4zm13-1a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 010-2h1.586l-2.293-2.293a1 1 0 111.414-1.414L15.586 13H14a1 1 0 01-1-1z" clip-rule="evenodd"/>
+            </svg>
+            <%= number_to_human_size(@software.file_size) %>
+          </div>
+        <% end %>
+        
+        <div class="flex items-center">
+          <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L10 9.586V6z" clip-rule="evenodd"/>
+          </svg>
+          <%= time_ago_in_words(@software.created_at) %> ago
+        </div>
+      </div>
+    </div>
+
+    <!-- Screenshots Gallery -->
+    <% if @software.screenshots.attached? %>
+      <div class="mb-8">
+        <h2 class="text-xl font-semibold text-white mb-4">Screenshots</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <% @software.screenshots.each do |screenshot| %>
+            <div class="relative group cursor-pointer">
+              <%= image_tag screenshot.variant(resize_to_fill: [400, 250]), 
+                  alt: "#{@software.title} screenshot", 
+                  class: "w-full h-48 object-cover rounded-lg border border-gray-700 group-hover:border-green-400 transition-colors" %>
+              <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 rounded-lg flex items-center justify-center">
+                <svg class="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm0 4a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1V8zm8 0a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1h-4a1 1 0 01-1-1V8zm0 4a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1h-4a1 1 0 01-1-1v-2z" clip-rule="evenodd"/>
+                </svg>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Description -->
+    <div class="mb-8">
+      <h2 class="text-xl font-semibold text-white mb-4">Description</h2>
+      <div class="prose prose-invert max-w-none">
+        <p class="text-gray-300 leading-relaxed">
+          <%= simple_format(@software.description) %>
+        </p>
+      </div>
+    </div>
+
+    <!-- System Requirements -->
+    <% if @software.os_requirements.present? %>
+      <div class="mb-8">
+        <h2 class="text-xl font-semibold text-white mb-4">System Requirements</h2>
+        <div class="bg-gray-800 rounded-lg p-4 border border-gray-700">
+          <p class="text-gray-300"><%= @software.os_requirements %></p>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Sidebar -->
+  <div class="lg:col-span-1">
+    <!-- Download Section -->
+    <div class="bg-gray-800 rounded-lg p-6 border border-gray-700 mb-6">
+      <h3 class="text-lg font-semibold text-white mb-4">Download</h3>
+      
+      <% if @software.install_files.attached? %>
+        <div class="space-y-3">
+          <% @software.install_files.each_with_index do |file, index| %>
+            <div class="bg-gray-700 rounded-lg p-4">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-sm font-medium text-gray-300">
+                  <%= file.filename %>
+                </span>
+                <span class="text-xs text-gray-500">
+                  <%= number_to_human_size(file.byte_size) %>
+                </span>
+              </div>
+              <%= link_to software_download_path(@software, file), 
+                  class: "download-button w-full text-center block" do %>
+                <svg class="w-4 h-4 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 011 1v1a1 1 0 01-1 1H4a1 1 0 01-1-1v-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                </svg>
+                Download Now
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="text-center py-4">
+          <svg class="w-12 h-12 mx-auto text-gray-500 mb-2" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm0 4a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1V8zm8 0a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1h-4a1 1 0 01-1-1V8zm0 4a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1h-4a1 1 0 01-1-1v-2z" clip-rule="evenodd"/>
+          </svg>
+          <p class="text-gray-500 text-sm">No download files available</p>
+        </div>
+      <% end %>
+      
+      <!-- Warning Notice -->
+      <div class="mt-4 p-3 bg-yellow-900 bg-opacity-50 border border-yellow-700 rounded">
+        <div class="flex">
+          <svg class="w-5 h-5 text-yellow-400 mr-2 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+          </svg>
+          <div>
+            <p class="text-yellow-300 text-xs font-medium">Educational Use Only</p>
+            <p class="text-yellow-400 text-xs mt-1">
+              Please respect software licensing and use for educational purposes only.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Software Info -->
+    <div class="bg-gray-800 rounded-lg p-6 border border-gray-700 mb-6">
+      <h3 class="text-lg font-semibold text-white mb-4">Information</h3>
+      <dl class="space-y-3">
+        <div>
+          <dt class="text-sm font-medium text-gray-400">Version</dt>
+          <dd class="text-sm text-gray-300"><%= @software.version %></dd>
+        </div>
+        
+        <% if @software.developer.present? %>
+          <div>
+            <dt class="text-sm font-medium text-gray-400">Developer</dt>
+            <dd class="text-sm text-gray-300"><%= @software.developer %></dd>
+          </div>
+        <% end %>
+        
+        <% if @software.official_site.present? %>
+          <div>
+            <dt class="text-sm font-medium text-gray-400">Official Site</dt>
+            <dd class="text-sm">
+              <%= link_to @software.official_site, @software.official_site, 
+                  target: "_blank", rel: "nofollow", 
+                  class: "text-green-400 hover:text-green-300 transition-colors" %>
+            </dd>
+          </div>
+        <% end %>
+        
+        <div>
+          <dt class="text-sm font-medium text-gray-400">Category</dt>
+          <dd class="text-sm">
+            <%= link_to @software.category.name, root_path(category_id: @software.category.id), 
+                class: "text-green-400 hover:text-green-300 transition-colors" %>
+          </dd>
+        </div>
+        
+        <div>
+          <dt class="text-sm font-medium text-gray-400">Downloads</dt>
+          <dd class="text-sm text-gray-300"><%= @software.downloads_count %></dd>
+        </div>
+        
+        <div>
+          <dt class="text-sm font-medium text-gray-400">Added</dt>
+          <dd class="text-sm text-gray-300"><%= @software.created_at.strftime("%B %d, %Y") %></dd>
+        </div>
+      </dl>
+    </div>
+
+    <!-- Related Software -->
+    <% if @related_softwares.any? %>
+      <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+        <h3 class="text-lg font-semibold text-white mb-4">Related Software</h3>
+        <div class="space-y-3">
+          <% @related_softwares.each do |related| %>
+            <div class="flex items-center space-x-3 p-2 rounded hover:bg-gray-700 transition-colors">
+              <% if related.featured_image.attached? %>
+                <%= image_tag related.featured_image.variant(resize_to_fill: [40, 40]), 
+                    alt: related.title, 
+                    class: "w-10 h-10 object-cover rounded" %>
+              <% else %>
+                <div class="w-10 h-10 bg-gray-600 rounded flex items-center justify-center">
+                  <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm0 4a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1V8zm8 0a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1h-4a1 1 0 01-1-1V8zm0 4a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1h-4a1 1 0 01-1-1v-2z" clip-rule="evenodd"/>
+                  </svg>
+                </div>
+              <% end %>
+              <div class="flex-1 min-w-0">
+                <%= link_to software_path(related), class: "block hover:text-green-400 transition-colors" do %>
+                  <p class="text-sm font-medium text-gray-300 truncate">
+                    <%= related.title %>
+                  </p>
+                  <p class="text-xs text-gray-500">
+                    v<%= related.version %> • <%= related.downloads_count %> downloads
+                  </p>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

@@ -1,0 +1,258 @@
+<% content_for :title, "#{@software.title} - Admin" %>
+
+<!-- Page Header -->
+<div class="mb-8">
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-3xl font-bold text-white mb-2"><%= @software.title %></h1>
+      <div class="flex items-center space-x-4 text-sm text-gray-400">
+        <span class="bg-green-600 text-white px-2 py-1 rounded">
+          <%= @software.category.name %>
+        </span>
+        <span>v<%= @software.version %></span>
+        <% if @software.developer.present? %>
+          <span>by <%= @software.developer %></span>
+        <% end %>
+        <span class="<%= @software.published? ? 'text-green-400' : 'text-yellow-400' %>">
+          <%= @software.status.capitalize %>
+        </span>
+      </div>
+    </div>
+    <div class="flex space-x-3">
+      <%= link_to "View Public Page", software_path(@software), 
+          class: "btn-secondary",
+          target: "_blank" %>
+      <%= link_to "Edit Software", edit_admin_software_path(@software), 
+          class: "btn-primary" %>
+      <%= link_to "← Back to Software", admin_softwares_path, 
+          class: "text-green-400 hover:text-green-300 transition-colors" %>
+    </div>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+  <!-- Main Content -->
+  <div class="lg:col-span-2 space-y-6">
+    <!-- Basic Information -->
+    <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+      <h2 class="text-xl font-semibold text-white mb-4">Basic Information</h2>
+      
+      <dl class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <dt class="text-sm font-medium text-gray-400">Title</dt>
+          <dd class="text-sm text-gray-300 mt-1"><%= @software.title %></dd>
+        </div>
+        
+        <div>
+          <dt class="text-sm font-medium text-gray-400">Version</dt>
+          <dd class="text-sm text-gray-300 mt-1">v<%= @software.version %></dd>
+        </div>
+        
+        <div>
+          <dt class="text-sm font-medium text-gray-400">Category</dt>
+          <dd class="text-sm text-gray-300 mt-1"><%= @software.category.name %></dd>
+        </div>
+        
+        <div>
+          <dt class="text-sm font-medium text-gray-400">Status</dt>
+          <dd class="text-sm mt-1">
+            <% if @software.published? %>
+              <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                Published
+              </span>
+            <% else %>
+              <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
+                Draft
+              </span>
+            <% end %>
+          </dd>
+        </div>
+        
+        <% if @software.developer.present? %>
+          <div>
+            <dt class="text-sm font-medium text-gray-400">Developer</dt>
+            <dd class="text-sm text-gray-300 mt-1"><%= @software.developer %></dd>
+          </div>
+        <% end %>
+        
+        <% if @software.official_site.present? %>
+          <div>
+            <dt class="text-sm font-medium text-gray-400">Official Site</dt>
+            <dd class="text-sm mt-1">
+              <%= link_to @software.official_site, @software.official_site, 
+                  target: "_blank", rel: "nofollow", 
+                  class: "text-green-400 hover:text-green-300 transition-colors" %>
+            </dd>
+          </div>
+        <% end %>
+        
+        <% if @software.file_size.present? %>
+          <div>
+            <dt class="text-sm font-medium text-gray-400">File Size</dt>
+            <dd class="text-sm text-gray-300 mt-1"><%= number_to_human_size(@software.file_size) %></dd>
+          </div>
+        <% end %>
+        
+        <div>
+          <dt class="text-sm font-medium text-gray-400">Downloads</dt>
+          <dd class="text-sm text-gray-300 mt-1"><%= number_with_delimiter(@software.downloads_count) %></dd>
+        </div>
+      </dl>
+    </div>
+
+    <!-- Description -->
+    <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+      <h2 class="text-xl font-semibold text-white mb-4">Description</h2>
+      <div class="prose prose-invert max-w-none">
+        <% if @software.description.present? %>
+          <p class="text-gray-300 leading-relaxed">
+            <%= simple_format(@software.description) %>
+          </p>
+        <% else %>
+          <p class="text-gray-500 italic">No description provided.</p>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- System Requirements -->
+    <% if @software.os_requirements.present? %>
+      <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+        <h2 class="text-xl font-semibold text-white mb-4">System Requirements</h2>
+        <p class="text-gray-300"><%= @software.os_requirements %></p>
+      </div>
+    <% end %>
+
+    <!-- Screenshots -->
+    <% if @software.screenshots.attached? %>
+      <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+        <h2 class="text-xl font-semibold text-white mb-4">Screenshots</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <% @software.screenshots.each do |screenshot| %>
+            <div class="relative group">
+              <%= image_tag screenshot.variant(resize_to_fill: [400, 250]), 
+                  alt: "#{@software.title} screenshot", 
+                  class: "w-full h-48 object-cover rounded-lg border border-gray-700" %>
+              <div class="absolute top-2 right-2">
+                <p class="text-xs text-white bg-black bg-opacity-50 px-2 py-1 rounded">
+                  <%= number_to_human_size(screenshot.byte_size) %>
+                </p>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Install Files -->
+    <% if @software.install_files.attached? %>
+      <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+        <h2 class="text-xl font-semibold text-white mb-4">Installation Files</h2>
+        <div class="space-y-3">
+          <% @software.install_files.each do |file| %>
+            <div class="bg-gray-700 rounded-lg p-4 border border-gray-600">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                  <svg class="w-5 h-5 text-gray-400 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 011 1v1a1 1 0 01-1 1H4a1 1 0 01-1-1v-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                  </svg>
+                  <div>
+                    <p class="text-sm font-medium text-white"><%= file.filename %></p>
+                    <p class="text-xs text-gray-400"><%= number_to_human_size(file.byte_size) %></p>
+                  </div>
+                </div>
+                <div class="text-sm text-gray-400">
+                  <%= file.content_type %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Sidebar -->
+  <div class="lg:col-span-1 space-y-6">
+    <!-- Quick Actions -->
+    <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+      <h3 class="text-lg font-semibold text-white mb-4">Quick Actions</h3>
+      <div class="space-y-3">
+        <%= link_to "Edit Software", edit_admin_software_path(@software), 
+            class: "w-full btn-primary text-center block" %>
+        
+        <%= link_to "View Public Page", software_path(@software), 
+            class: "w-full btn-secondary text-center block",
+            target: "_blank" %>
+        
+        <% if @software.published? %>
+          <%= link_to "Unpublish", admin_software_path(@software, software: { status: 'draft' }), 
+              method: :patch,
+              data: { confirm: "Unpublish this software?" },
+              class: "w-full bg-yellow-600 hover:bg-yellow-700 text-white py-2 px-4 rounded-md transition-colors text-center block" %>
+        <% else %>
+          <%= link_to "Publish", admin_software_path(@software, software: { status: 'published' }), 
+              method: :patch,
+              data: { confirm: "Publish this software?" },
+              class: "w-full bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-md transition-colors text-center block" %>
+        <% end %>
+        
+        <%= link_to "Delete Software", admin_software_path(@software), 
+            method: :delete,
+            data: { 
+              confirm: "Are you sure you want to delete '#{@software.title}'? This action cannot be undone." 
+            },
+            class: "w-full bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-md transition-colors text-center block" %>
+      </div>
+    </div>
+
+    <!-- Statistics -->
+    <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+      <h3 class="text-lg font-semibold text-white mb-4">Statistics</h3>
+      <dl class="space-y-3">
+        <div>
+          <dt class="text-sm font-medium text-gray-400">Total Downloads</dt>
+          <dd class="text-2xl font-bold text-white"><%= number_with_delimiter(@software.downloads_count) %></dd>
+        </div>
+        
+        <div>
+          <dt class="text-sm font-medium text-gray-400">Screenshots</dt>
+          <dd class="text-sm text-gray-300"><%= @software.screenshots.count %></dd>
+        </div>
+        
+        <div>
+          <dt class="text-sm font-medium text-gray-400">Install Files</dt>
+          <dd class="text-sm text-gray-300"><%= @software.install_files.count %></dd>
+        </div>
+        
+        <div>
+          <dt class="text-sm font-medium text-gray-400">Created</dt>
+          <dd class="text-sm text-gray-300"><%= @software.created_at.strftime("%B %d, %Y") %></dd>
+        </div>
+        
+        <div>
+          <dt class="text-sm font-medium text-gray-400">Last Updated</dt>
+          <dd class="text-sm text-gray-300"><%= @software.updated_at.strftime("%B %d, %Y") %></dd>
+        </div>
+      </dl>
+    </div>
+
+    <!-- Category Info -->
+    <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+      <h3 class="text-lg font-semibold text-white mb-4">Category Information</h3>
+      <div class="space-y-3">
+        <div>
+          <p class="text-sm font-medium text-gray-300"><%= @software.category.name %></p>
+          <% if @software.category.description.present? %>
+            <p class="text-xs text-gray-500 mt-1"><%= @software.category.description %></p>
+          <% end %>
+        </div>
+        
+        <div class="pt-3 border-t border-gray-700">
+          <%= link_to "View All in #{@software.category.name}", 
+              admin_softwares_path(category_id: @software.category.id), 
+              class: "text-sm text-green-400 hover:text-green-300 transition-colors" %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

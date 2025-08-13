@@ -1,0 +1,223 @@
+<%= form_with model: [:admin, software], local: true, multipart: true, 
+    class: "space-y-6" do |form| %>
+  <% if software.errors.any? %>
+    <div class="bg-red-600 bg-opacity-20 border border-red-600 rounded-lg p-4">
+      <div class="flex">
+        <svg class="w-5 h-5 text-red-400 mr-2 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+        </svg>
+        <div>
+          <h3 class="text-sm font-medium text-red-300">
+            <%= pluralize(software.errors.count, "error") %> prohibited this software from being saved:
+          </h3>
+          <ul class="mt-2 text-sm text-red-200 list-disc list-inside">
+            <% software.errors.each do |error| %>
+              <li><%= error.full_message %></li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Main Form -->
+    <div class="lg:col-span-2 space-y-6">
+      <!-- Basic Information -->
+      <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+        <h3 class="text-lg font-semibold text-white mb-4">Basic Information</h3>
+        
+        <div class="space-y-4">
+          <div>
+            <%= form.label :title, class: "block text-sm font-medium text-gray-300 mb-2" %>
+            <%= form.text_field :title, 
+                class: "w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent",
+                placeholder: "Enter software title" %>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <%= form.label :version, class: "block text-sm font-medium text-gray-300 mb-2" %>
+              <%= form.text_field :version, 
+                  class: "w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent",
+                  placeholder: "e.g., 1.0.0" %>
+            </div>
+            
+            <div>
+              <%= form.label :category_id, "Category", class: "block text-sm font-medium text-gray-300 mb-2" %>
+              <%= form.select :category_id, 
+                  options_from_collection_for_select(@categories, :id, :name, software.category_id),
+                  { prompt: "Select a category" },
+                  { class: "w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" } %>
+            </div>
+          </div>
+
+          <div>
+            <%= form.label :developer, class: "block text-sm font-medium text-gray-300 mb-2" %>
+            <%= form.text_field :developer, 
+                class: "w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent",
+                placeholder: "Developer/Company name" %>
+          </div>
+
+          <div>
+            <%= form.label :official_site, "Official Website", class: "block text-sm font-medium text-gray-300 mb-2" %>
+            <%= form.url_field :official_site, 
+                class: "w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent",
+                placeholder: "https://example.com" %>
+          </div>
+
+          <div>
+            <%= form.label :description, class: "block text-sm font-medium text-gray-300 mb-2" %>
+            <%= form.text_area :description, rows: 6,
+                class: "w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent",
+                placeholder: "Describe the software features and functionality..." %>
+          </div>
+
+          <div>
+            <%= form.label :os_requirements, "System Requirements", class: "block text-sm font-medium text-gray-300 mb-2" %>
+            <%= form.text_area :os_requirements, rows: 3,
+                class: "w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent",
+                placeholder: "e.g., Windows 10 or later, 4GB RAM, 1GB disk space" %>
+          </div>
+
+          <div>
+            <%= form.label :file_size, "File Size (bytes)", class: "block text-sm font-medium text-gray-300 mb-2" %>
+            <%= form.number_field :file_size, 
+                class: "w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent",
+                placeholder: "e.g., 104857600 (100MB)" %>
+            <p class="mt-1 text-xs text-gray-500">Enter file size in bytes (optional, will be auto-calculated from uploaded files)</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- File Uploads -->
+      <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+        <h3 class="text-lg font-semibold text-white mb-4">Files & Media</h3>
+        
+        <div class="space-y-6">
+          <!-- Screenshots -->
+          <div>
+            <%= form.label :screenshots, class: "block text-sm font-medium text-gray-300 mb-2" %>
+            <%= form.file_field :screenshots, multiple: true, accept: "image/*",
+                class: "w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-green-600 file:text-white hover:file:bg-green-700" %>
+            <p class="mt-1 text-xs text-gray-500">Upload multiple screenshot images (max 5MB each)</p>
+            
+            <% if software.persisted? && software.screenshots.attached? %>
+              <div class="mt-4 grid grid-cols-2 md:grid-cols-3 gap-4">
+                <% software.screenshots.each do |screenshot| %>
+                  <div class="relative group">
+                    <%= image_tag screenshot.variant(resize_to_fill: [150, 100]), 
+                        alt: "Screenshot", 
+                        class: "w-full h-24 object-cover rounded border border-gray-600" %>
+                    <%= button_to "×", remove_attachment_admin_software_path(software, screenshot.signed_id), 
+                        method: :delete,
+                        data: { confirm: "Remove this screenshot?" },
+                        class: "absolute top-1 right-1 bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity border-0 cursor-pointer" %>
+                  </div>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+
+          <!-- Install Files -->
+          <div>
+            <%= form.label :install_files, "Installation Files", class: "block text-sm font-medium text-gray-300 mb-2" %>
+            <%= form.file_field :install_files, multiple: true,
+                class: "w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-green-600 file:text-white hover:file:bg-green-700" %>
+            <p class="mt-1 text-xs text-gray-500">Upload installation files (max 500MB each)</p>
+            
+            <% if software.persisted? && software.install_files.attached? %>
+              <div class="mt-4 space-y-2">
+                <% software.install_files.each do |file| %>
+                  <div class="flex items-center justify-between p-3 bg-gray-700 rounded border border-gray-600">
+                    <div class="flex items-center">
+                      <svg class="w-5 h-5 text-gray-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 011 1v1a1 1 0 01-1 1H4a1 1 0 01-1-1v-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                      </svg>
+                      <div>
+                        <p class="text-sm text-white"><%= file.filename %></p>
+                        <p class="text-xs text-gray-400"><%= number_to_human_size(file.byte_size) %></p>
+                      </div>
+                    </div>
+                    <%= button_to "Remove", remove_attachment_admin_software_path(software, file.signed_id), 
+                        method: :delete,
+                        data: { confirm: "Remove this file?" },
+                        class: "text-red-400 hover:text-red-300 text-sm bg-transparent border-0 cursor-pointer" %>
+                  </div>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="lg:col-span-1 space-y-6">
+      <!-- Publishing -->
+      <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+        <h3 class="text-lg font-semibold text-white mb-4">Publishing</h3>
+        
+        <div class="space-y-4">
+          <div>
+            <%= form.label :published, "Status", class: "block text-sm font-medium text-gray-300 mb-2" %>
+            <%= form.select :published, 
+                [["Draft", false], ["Published", true]],
+                { selected: software.published },
+                { class: "w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" } %>
+          </div>
+          
+          <% if software.persisted? %>
+            <div class="text-sm text-gray-400">
+              <p><strong>Created:</strong> <%= software.created_at.strftime("%B %d, %Y at %I:%M %p") %></p>
+              <p><strong>Updated:</strong> <%= software.updated_at.strftime("%B %d, %Y at %I:%M %p") %></p>
+              <% if software.downloads_count > 0 %>
+                <p><strong>Downloads:</strong> <%= number_with_delimiter(software.downloads_count) %></p>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+        <h3 class="text-lg font-semibold text-white mb-4">Actions</h3>
+        
+        <div class="space-y-3">
+          <%= form.submit software.persisted? ? "Update Software" : "Create Software", 
+              class: "w-full btn-primary" %>
+          
+          <% if software.persisted? %>
+            <%= link_to "View Software", software_path(software), 
+                class: "w-full btn-secondary text-center block",
+                target: "_blank" %>
+          <% end %>
+          
+          <%= link_to "Cancel", admin_softwares_path, 
+              class: "w-full btn-secondary text-center block" %>
+          
+          <% if software.persisted? %>
+            <%= link_to "Delete Software", admin_software_path(software), 
+                method: :delete,
+                data: { 
+                  confirm: "Are you sure you want to delete '#{software.title}'? This action cannot be undone." 
+                },
+                class: "w-full bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-md transition-colors text-center block" %>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Help -->
+      <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+        <h3 class="text-lg font-semibold text-white mb-4">Tips</h3>
+        <div class="text-sm text-gray-400 space-y-2">
+          <p>• Use descriptive titles for better searchability</p>
+          <p>• Upload high-quality screenshots to showcase features</p>
+          <p>• Include detailed system requirements</p>
+          <p>• Keep descriptions informative but concise</p>
+          <p>• Test download files before publishing</p>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>

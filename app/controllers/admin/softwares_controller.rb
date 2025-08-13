@@ -2,9 +2,24 @@ class Admin::SoftwaresController < Admin::BaseController
   before_action :find_software, only: [:show, :edit, :update, :destroy, :remove_attachment]
   
   def index
+    @categories = Category.all
+    
     @softwares = Software.includes(:category, featured_image_attachment: :blob)
-                        .order(created_at: :desc)
-                        .page(params[:page])
+    
+    # Apply filters
+    @softwares = @softwares.where("title ILIKE ?", "%#{params[:search]}%") if params[:search].present?
+    @softwares = @softwares.where(category_id: params[:category_id]) if params[:category_id].present?
+    
+    if params[:status].present?
+      case params[:status]
+      when 'published'
+        @softwares = @softwares.published
+      when 'draft'
+        @softwares = @softwares.draft
+      end
+    end
+    
+    @softwares = @softwares.order(created_at: :desc)
   end
   
   def show
@@ -45,9 +60,20 @@ class Admin::SoftwaresController < Admin::BaseController
   end
   
   def remove_attachment
-    attachment = @software.screenshots.find(params[:attachment_id])
-    attachment.purge
-    redirect_to edit_admin_software_path(@software), notice: 'Attachment removed successfully'
+    attachment_id = params[:attachment_id]
+    
+    # Try to find in screenshots first
+    attachment = @software.screenshots.find { |s| s.signed_id == attachment_id }
+    attachment ||= @software.install_files.find { |f| f.signed_id == attachment_id }
+    
+    if attachment
+      attachment.purge
+      redirect_to edit_admin_software_path(@software), notice: 'Attachment removed successfully'
+    else
+      redirect_to edit_admin_software_path(@software), alert: 'Attachment not found'
+    end
+  rescue => e
+    redirect_to edit_admin_software_path(@software), alert: "Error removing attachment: #{e.message}"
   end
   
   private

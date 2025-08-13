@@ -1,0 +1,31 @@
+<!-- Empty State Component -->
+<div class="text-center py-16 <%= local_assigns[:class] %>">
+  <div class="max-w-md mx-auto">
+    <!-- Icon -->
+    <div class="mb-4">
+      <% if local_assigns[:icon] %>
+        <%= icon %>
+      <% else %>
+        <svg class="w-24 h-24 mx-auto text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm0 4a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1V8zm8 0a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1h-4a1 1 0 01-1-1V8zm0 4a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1h-4a1 1 0 01-1-1v-2z" clip-rule="evenodd"/>
+        </svg>
+      <% end %>
+    </div>
+    
+    <!-- Title -->
+    <h3 class="text-xl font-semibold text-gray-400 mb-2">
+      <%= local_assigns[:title] || "Nothing here yet" %>
+    </h3>
+    
+    <!-- Description -->
+    <p class="text-gray-500 mb-6">
+      <%= local_assigns[:description] || "Content will appear here when available." %>
+    </p>
+    
+    <!-- Action Button -->
+    <% if local_assigns[:action_text] && local_assigns[:action_path] %>
+      <%= link_to action_text, action_path, 
+          class: local_assigns[:action_class] || "btn-primary" %>
+    <% end %>
+  </div>
+</div>

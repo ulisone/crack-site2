@@ -1,0 +1,84 @@
+<% content_for :title, "Categories - Software Crackz" %>
+
+<!-- Page Header -->
+<div class="mb-8">
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-3xl font-bold text-white mb-2">All Categories</h1>
+      <p class="text-gray-400">Browse software by category</p>
+    </div>
+  </div>
+</div>
+
+<!-- Categories Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+  <% @categories.each do |category| %>
+    <div class="software-card group">
+      <!-- Category Header -->
+      <div class="p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-xl font-semibold text-white">
+            <%= link_to category.name, root_path(category_id: category.id), 
+                class: "hover:text-green-400 transition-colors" %>
+          </h3>
+          <span class="bg-green-600 text-white px-2 py-1 rounded text-sm">
+            <%= category.softwares_count %>
+          </span>
+        </div>
+        
+        <% if category.description.present? %>
+          <p class="text-gray-400 text-sm leading-relaxed mb-4">
+            <%= truncate(category.description, length: 120) %>
+          </p>
+        <% end %>
+        
+        <!-- Recent Software Preview -->
+        <% recent_software = category.softwares.published.limit(3) %>
+        <% if recent_software.any? %>
+          <div class="space-y-2">
+            <h4 class="text-sm font-medium text-gray-400">Recent Software:</h4>
+            <% recent_software.each do |software| %>
+              <div class="flex items-center space-x-2 text-sm">
+                <% if software.featured_image.attached? %>
+                  <%= image_tag software.featured_image.variant(resize_to_fill: [24, 24]), 
+                      alt: software.title, 
+                      class: "w-6 h-6 object-cover rounded" %>
+                <% else %>
+                  <div class="w-6 h-6 bg-gray-600 rounded flex items-center justify-center">
+                    <svg class="w-3 h-3 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm0 4a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1V8zm8 0a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1h-4a1 1 0 01-1-1V8zm0 4a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1h-4a1 1 0 01-1-1v-2z" clip-rule="evenodd"/>
+                    </svg>
+                  </div>
+                <% end %>
+                <span class="text-gray-300 truncate flex-1">
+                  <%= link_to software.title, software_path(software), 
+                      class: "hover:text-green-400 transition-colors" %>
+                </span>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+        
+        <!-- View Category Button -->
+        <div class="mt-6">
+          <%= link_to "Browse #{category.softwares_count} software →", 
+              root_path(category_id: category.id), 
+              class: "text-green-400 hover:text-green-300 transition-colors text-sm font-medium" %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<!-- Empty State -->
+<% if @categories.empty? %>
+  <div class="text-center py-16">
+    <div class="max-w-md mx-auto">
+      <svg class="w-24 h-24 mx-auto text-gray-600 mb-4" fill="currentColor" viewBox="0 0 20 20">
+        <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z"/>
+      </svg>
+      <h3 class="text-xl font-semibold text-gray-400 mb-2">No categories available</h3>
+      <p class="text-gray-500">Categories will appear here once they are created.</p>
+    </div>
+  </div>
+<% end %>

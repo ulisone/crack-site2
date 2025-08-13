@@ -29,7 +29,7 @@
   }
   
   .software-card {
-    @apply bg-gray-800 border border-gray-700 rounded-xl overflow-hidden transition-all duration-300;
+    @apply bg-gray-800 border border-gray-700 rounded-xl overflow-hidden transition-all duration-300 flex flex-col h-full;
   }
   
   .software-card:hover {

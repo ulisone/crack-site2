@@ -1,0 +1,14 @@
+<!-- Loading Spinner Component -->
+<div class="loading-spinner <%= local_assigns[:class] %>">
+  <div class="flex items-center justify-center">
+    <div class="relative">
+      <!-- Outer Ring -->
+      <div class="w-8 h-8 border-4 border-gray-600 border-t-green-400 rounded-full animate-spin"></div>
+      <!-- Inner Ring -->
+      <div class="absolute top-1 left-1 w-6 h-6 border-4 border-transparent border-t-green-300 rounded-full animate-spin" style="animation-direction: reverse; animation-duration: 0.75s;"></div>
+    </div>
+    <% if local_assigns[:text] %>
+      <span class="ml-3 text-gray-400 text-sm"><%= text %></span>
+    <% end %>
+  </div>
+</div>

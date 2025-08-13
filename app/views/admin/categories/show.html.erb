@@ -1,0 +1,270 @@
+<% content_for :title, "#{@category.name} - Admin" %>
+
+<!-- Page Header -->
+<div class="mb-8">
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-3xl font-bold text-white mb-2"><%= @category.name %></h1>
+      <div class="flex items-center space-x-4 text-sm text-gray-400">
+        <span>Position #<%= @category.position %></span>
+        <span><%= pluralize(@category.softwares_count, 'software') %></span>
+        <% if @category.slug.present? %>
+          <span>/<%= @category.slug %></span>
+        <% end %>
+      </div>
+    </div>
+    <div class="flex space-x-3">
+      <%= link_to "View Public Page", root_path(category_id: @category.id), 
+          class: "btn-secondary",
+          target: "_blank" %>
+      <%= link_to "Edit Category", edit_admin_category_path(@category), 
+          class: "btn-primary" %>
+      <%= link_to "← Back to Categories", admin_categories_path, 
+          class: "text-green-400 hover:text-green-300 transition-colors" %>
+    </div>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+  <!-- Main Content -->
+  <div class="lg:col-span-2 space-y-6">
+    <!-- Basic Information -->
+    <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+      <h2 class="text-xl font-semibold text-white mb-4">Category Information</h2>
+      
+      <dl class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <dt class="text-sm font-medium text-gray-400">Name</dt>
+          <dd class="text-sm text-gray-300 mt-1"><%= @category.name %></dd>
+        </div>
+        
+        <div>
+          <dt class="text-sm font-medium text-gray-400">URL Slug</dt>
+          <dd class="text-sm text-gray-300 mt-1">
+            <% if @category.slug.present? %>
+              /<%= @category.slug %>
+            <% else %>
+              <em class="text-gray-500">Auto-generated</em>
+            <% end %>
+          </dd>
+        </div>
+        
+        <div>
+          <dt class="text-sm font-medium text-gray-400">Position</dt>
+          <dd class="text-sm text-gray-300 mt-1">#<%= @category.position %></dd>
+        </div>
+        
+        <div>
+          <dt class="text-sm font-medium text-gray-400">Software Count</dt>
+          <dd class="text-sm text-gray-300 mt-1">
+            <%= link_to pluralize(@category.softwares_count, 'software'), 
+                admin_softwares_path(category_id: @category.id), 
+                class: "text-green-400 hover:text-green-300 transition-colors" %>
+          </dd>
+        </div>
+        
+        <div>
+          <dt class="text-sm font-medium text-gray-400">Created</dt>
+          <dd class="text-sm text-gray-300 mt-1"><%= @category.created_at.strftime("%B %d, %Y at %I:%M %p") %></dd>
+        </div>
+        
+        <div>
+          <dt class="text-sm font-medium text-gray-400">Last Updated</dt>
+          <dd class="text-sm text-gray-300 mt-1"><%= @category.updated_at.strftime("%B %d, %Y at %I:%M %p") %></dd>
+        </div>
+      </dl>
+    </div>
+
+    <!-- Description -->
+    <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+      <h2 class="text-xl font-semibold text-white mb-4">Description</h2>
+      <div class="prose prose-invert max-w-none">
+        <% if @category.description.present? %>
+          <p class="text-gray-300 leading-relaxed">
+            <%= simple_format(@category.description) %>
+          </p>
+        <% else %>
+          <p class="text-gray-500 italic">No description provided.</p>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- SEO Information -->
+    <% if @category.meta_title.present? || @category.meta_description.present? %>
+      <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+        <h2 class="text-xl font-semibold text-white mb-4">SEO Settings</h2>
+        
+        <dl class="space-y-4">
+          <% if @category.meta_title.present? %>
+            <div>
+              <dt class="text-sm font-medium text-gray-400">Page Title</dt>
+              <dd class="text-sm text-gray-300 mt-1"><%= @category.meta_title %></dd>
+            </div>
+          <% end %>
+          
+          <% if @category.meta_description.present? %>
+            <div>
+              <dt class="text-sm font-medium text-gray-400">Meta Description</dt>
+              <dd class="text-sm text-gray-300 mt-1"><%= @category.meta_description %></dd>
+            </div>
+          <% end %>
+        </dl>
+      </div>
+    <% end %>
+
+    <!-- Software in this Category -->
+    <div class="bg-gray-800 rounded-lg border border-gray-700">
+      <div class="p-6 border-b border-gray-700">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-semibold text-white">Software in this Category</h2>
+          <div class="flex space-x-2">
+            <%= link_to "Add Software", new_admin_software_path(category_id: @category.id), 
+                class: "text-sm btn-primary" %>
+            <%= link_to "View All", admin_softwares_path(category_id: @category.id), 
+                class: "text-sm btn-secondary" %>
+          </div>
+        </div>
+      </div>
+      
+      <div class="p-6">
+        <% if @category.softwares.any? %>
+          <div class="space-y-4">
+            <% @category.softwares.includes(:category).limit(10).each do |software| %>
+              <div class="flex items-center justify-between py-3 border-b border-gray-700 last:border-b-0">
+                <div class="flex items-center space-x-3">
+                  <% if software.featured_image.attached? %>
+                    <%= image_tag software.featured_image.variant(resize_to_fill: [40, 40]), 
+                        alt: software.title, 
+                        class: "w-10 h-10 object-cover rounded" %>
+                  <% else %>
+                    <div class="w-10 h-10 bg-gray-600 rounded flex items-center justify-center">
+                      <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm0 4a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1V8zm8 0a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1h-4a1 1 0 01-1-1V8zm0 4a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1h-4a1 1 0 01-1-1v-2z" clip-rule="evenodd"/>
+                      </svg>
+                    </div>
+                  <% end %>
+                  <div>
+                    <p class="text-sm font-medium text-white">
+                      <%= link_to software.title, admin_software_path(software), 
+                          class: "hover:text-green-400 transition-colors" %>
+                    </p>
+                    <div class="flex items-center space-x-2 text-xs text-gray-500">
+                      <span>v<%= software.version %></span>
+                      <% if software.developer.present? %>
+                        <span>•</span>
+                        <span><%= software.developer %></span>
+                      <% end %>
+                      <span>•</span>
+                      <span><%= software.downloads_count %> downloads</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex items-center space-x-2">
+                  <% if software.published? %>
+                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                      Published
+                    </span>
+                  <% else %>
+                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
+                      Draft
+                    </span>
+                  <% end %>
+                  
+                  <%= link_to "Edit", edit_admin_software_path(software), 
+                      class: "text-sm text-blue-400 hover:text-blue-300 transition-colors" %>
+                </div>
+              </div>
+            <% end %>
+            
+            <% if @category.softwares_count > 10 %>
+              <div class="text-center pt-4 border-t border-gray-700">
+                <%= link_to "View all #{@category.softwares_count} software →", 
+                    admin_softwares_path(category_id: @category.id), 
+                    class: "text-green-400 hover:text-green-300 transition-colors" %>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="text-center py-12">
+            <svg class="w-16 h-16 mx-auto text-gray-600 mb-4" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm0 4a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1V8zm8 0a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1h-4a1 1 0 01-1-1V8zm0 4a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1h-4a1 1 0 01-1-1v-2z" clip-rule="evenodd"/>
+            </svg>
+            <h3 class="text-lg font-medium text-gray-400 mb-2">No software in this category</h3>
+            <p class="text-gray-500 mb-6">Get started by adding software to this category.</p>
+            <%= link_to "Add Software", new_admin_software_path(category_id: @category.id), 
+                class: "btn-primary" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sidebar -->
+  <div class="lg:col-span-1 space-y-6">
+    <!-- Quick Actions -->
+    <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+      <h3 class="text-lg font-semibold text-white mb-4">Quick Actions</h3>
+      <div class="space-y-3">
+        <%= link_to "Edit Category", edit_admin_category_path(@category), 
+            class: "w-full btn-primary text-center block" %>
+        
+        <%= link_to "View Public Page", root_path(category_id: @category.id), 
+            class: "w-full btn-secondary text-center block",
+            target: "_blank" %>
+        
+        <%= link_to "Add Software", new_admin_software_path(category_id: @category.id), 
+            class: "w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md transition-colors text-center block" %>
+        
+        <%= link_to "Delete Category", admin_category_path(@category), 
+            method: :delete,
+            data: { 
+              confirm: "Are you sure you want to delete '#{@category.name}'? This will also affect all software in this category." 
+            },
+            class: "w-full bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-md transition-colors text-center block" %>
+      </div>
+    </div>
+
+    <!-- Statistics -->
+    <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+      <h3 class="text-lg font-semibold text-white mb-4">Statistics</h3>
+      <dl class="space-y-3">
+        <div>
+          <dt class="text-sm font-medium text-gray-400">Total Software</dt>
+          <dd class="text-2xl font-bold text-white"><%= @category.softwares_count %></dd>
+        </div>
+        
+        <div>
+          <dt class="text-sm font-medium text-gray-400">Published Software</dt>
+          <dd class="text-sm text-gray-300"><%= @category.softwares.published.count %></dd>
+        </div>
+        
+        <div>
+          <dt class="text-sm font-medium text-gray-400">Draft Software</dt>
+          <dd class="text-sm text-gray-300"><%= @category.softwares.draft.count %></dd>
+        </div>
+        
+        <div>
+          <dt class="text-sm font-medium text-gray-400">Total Downloads</dt>
+          <dd class="text-sm text-gray-300">
+            <%= number_with_delimiter(@category.softwares.sum(:downloads_count)) %>
+          </dd>
+        </div>
+      </dl>
+    </div>
+
+    <!-- Navigation -->
+    <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+      <h3 class="text-lg font-semibold text-white mb-4">Navigation</h3>
+      <div class="space-y-2">
+        <%= link_to "← Previous Category", admin_category_path(@previous_category), 
+            class: "block text-sm text-green-400 hover:text-green-300 transition-colors" if @previous_category %>
+        
+        <%= link_to "Next Category →", admin_category_path(@next_category), 
+            class: "block text-sm text-green-400 hover:text-green-300 transition-colors" if @next_category %>
+        
+        <%= link_to "All Categories", admin_categories_path, 
+            class: "block text-sm text-green-400 hover:text-green-300 transition-colors" %>
+      </div>
+    </div>
+  </div>
+</div>

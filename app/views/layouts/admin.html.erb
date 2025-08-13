@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= content_for(:title) || "Admin - Software Crackz" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= yield :head %>
+
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.png">
+
+    <%# Google Fonts %>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+
+    <%# Includes all stylesheet files in app/assets/stylesheets %>
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body class="bg-gray-900 text-white">
+    <!-- Admin Navigation -->
+    <nav class="admin-nav">
+      <div class="flex justify-between items-center">
+        <div class="flex items-center space-x-6">
+          <h1 class="text-xl font-bold text-green-400">
+            <%= link_to "Software Crackz Admin", admin_root_path %>
+          </h1>
+          <div class="flex space-x-4">
+            <%= link_to "Dashboard", admin_root_path, 
+                class: "text-gray-300 hover:text-green-400 transition-colors #{'text-green-400' if current_page?(admin_root_path)}" %>
+            <%= link_to "Software", admin_softwares_path, 
+                class: "text-gray-300 hover:text-green-400 transition-colors #{'text-green-400' if controller_name == 'softwares'}" %>
+            <%= link_to "Categories", admin_categories_path, 
+                class: "text-gray-300 hover:text-green-400 transition-colors #{'text-green-400' if controller_name == 'categories'}" %>
+            <%= link_to "Downloads", admin_downloads_path, 
+                class: "text-gray-300 hover:text-green-400 transition-colors #{'text-green-400' if controller_name == 'downloads'}" %>
+          </div>
+        </div>
+        
+        <div class="flex items-center space-x-4">
+          <%= link_to "View Site", root_path, 
+              class: "text-gray-300 hover:text-green-400 transition-colors", 
+              target: "_blank" %>
+          <span class="text-gray-500">|</span>
+          <span class="text-sm text-gray-400">Admin Panel</span>
+        </div>
+      </div>
+    </nav>
+    
+    <!-- Main Content -->
+    <main class="p-6">
+      <% if notice %>
+        <div class="bg-green-600 text-white p-4 rounded mb-6">
+          <div class="flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            <%= notice %>
+          </div>
+        </div>
+      <% end %>
+      
+      <% if alert %>
+        <div class="bg-red-600 text-white p-4 rounded mb-6">
+          <div class="flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+            </svg>
+            <%= alert %>
+          </div>
+        </div>
+      <% end %>
+      
+      <%= yield %>
+    </main>
+  </body>
+</html>

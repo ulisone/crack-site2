@@ -16,8 +16,13 @@ class Software < ApplicationRecord
   has_one_attached :featured_image
   
   scope :published, -> { where(published: true) }
+  scope :draft, -> { where(published: false) }
   scope :recent, -> { order(created_at: :desc) }
   scope :by_category, ->(category) { where(category: category) }
+  
+  def status
+    published? ? 'published' : 'draft'
+  end
   
   validate :acceptable_screenshots
   validate :acceptable_install_files

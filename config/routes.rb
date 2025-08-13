@@ -14,7 +14,7 @@ Rails.application.routes.draw do
     root 'dashboard#index'
     resources :softwares do
       member do
-        delete :remove_attachment
+        delete 'remove_attachment/:attachment_id', to: 'softwares#remove_attachment', as: :remove_attachment
       end
     end
     resources :categories
