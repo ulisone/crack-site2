@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_13_022050) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_13_035019) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -39,6 +39,54 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_13_022050) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "categories", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "slug", null: false
+    t.text "description"
+    t.integer "position", default: 0
+    t.integer "softwares_count", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_categories_on_name", unique: true
+    t.index ["position"], name: "index_categories_on_position"
+    t.index ["slug"], name: "index_categories_on_slug", unique: true
+  end
+
+  create_table "downloads", force: :cascade do |t|
+    t.integer "software_id", null: false
+    t.string "ip_address", null: false
+    t.text "user_agent"
+    t.string "file_name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_downloads_on_created_at"
+    t.index ["ip_address"], name: "index_downloads_on_ip_address"
+    t.index ["software_id", "created_at"], name: "index_downloads_on_software_id_and_created_at"
+    t.index ["software_id"], name: "index_downloads_on_software_id"
+  end
+
+  create_table "softwares", force: :cascade do |t|
+    t.string "title", null: false
+    t.text "description", null: false
+    t.string "version", null: false
+    t.string "developer"
+    t.string "official_site"
+    t.bigint "file_size"
+    t.string "os_requirements"
+    t.boolean "published", default: false
+    t.integer "downloads_count", default: 0
+    t.integer "category_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["category_id", "published"], name: "index_softwares_on_category_id_and_published"
+    t.index ["category_id"], name: "index_softwares_on_category_id"
+    t.index ["created_at"], name: "index_softwares_on_created_at"
+    t.index ["published"], name: "index_softwares_on_published"
+    t.index ["title"], name: "index_softwares_on_title"
+  end
+
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "downloads", "softwares"
+  add_foreign_key "softwares", "categories"
 end

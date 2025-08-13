@@ -21,3 +21,216 @@ FOREIGN KEY ("blob_id")
   [1m[36mActiveRecord::SchemaMigration Create (0.0ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ('20250813022050') RETURNING "version" /*application='CrackSite2'*/[0m
   [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='CrackSite2'*/[0m
   [1m[36mActiveRecord::SchemaMigration Load (0.2ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='CrackSite2'*/[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.3ms)[0m  [1m[34mSELECT * FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = 'environment' ORDER BY "ar_internal_metadata"."key" ASC LIMIT 1 /*application='CrackSite2'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.0ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='CrackSite2'*/[0m
+Migrating to CreateCategories (20250813034836)
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='CrackSite2'*/[0m
+  [1m[35m (1.6ms)[0m  [1m[35mCREATE TABLE "categories" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar NOT NULL, "slug" varchar NOT NULL, "description" text, "position" integer DEFAULT 0, "softwares_count" integer DEFAULT 0, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL) /*application='CrackSite2'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_categories_on_slug" ON "categories" ("slug") /*application='CrackSite2'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE INDEX "index_categories_on_position" ON "categories" ("position") /*application='CrackSite2'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_categories_on_name" ON "categories" ("name") /*application='CrackSite2'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.0ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ('20250813034836') RETURNING "version" /*application='CrackSite2'*/[0m
+  [1m[36mTRANSACTION (0.4ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='CrackSite2'*/[0m
+Migrating to CreateSoftwares (20250813034927)
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='CrackSite2'*/[0m
+  [1m[35m (0.7ms)[0m  [1m[35mCREATE TABLE "softwares" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "title" varchar NOT NULL, "description" text NOT NULL, "version" varchar NOT NULL, "developer" varchar, "official_site" varchar, "file_size" bigint, "os_requirements" varchar, "published" boolean DEFAULT 0, "downloads_count" integer DEFAULT 0, "category_id" integer NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_105d15278d"
+FOREIGN KEY ("category_id")
+  REFERENCES "categories" ("id")
+) /*application='CrackSite2'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE INDEX "index_softwares_on_category_id" ON "softwares" ("category_id") /*application='CrackSite2'*/[0m
+  [1m[35m (1.8ms)[0m  [1m[35mCREATE INDEX "index_softwares_on_published" ON "softwares" ("published") /*application='CrackSite2'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE INDEX "index_softwares_on_created_at" ON "softwares" ("created_at") /*application='CrackSite2'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE INDEX "index_softwares_on_title" ON "softwares" ("title") /*application='CrackSite2'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE INDEX "index_softwares_on_category_id_and_published" ON "softwares" ("category_id", "published") /*application='CrackSite2'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.4ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ('20250813034927') RETURNING "version" /*application='CrackSite2'*/[0m
+  [1m[36mTRANSACTION (0.4ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='CrackSite2'*/[0m
+Migrating to CreateDownloads (20250813035019)
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='CrackSite2'*/[0m
+  [1m[35m (4.5ms)[0m  [1m[35mCREATE TABLE "downloads" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "software_id" integer NOT NULL, "ip_address" varchar NOT NULL, "user_agent" text, "file_name" varchar, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_84ae4b2ae0"
+FOREIGN KEY ("software_id")
+  REFERENCES "softwares" ("id")
+) /*application='CrackSite2'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE INDEX "index_downloads_on_software_id" ON "downloads" ("software_id") /*application='CrackSite2'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE INDEX "index_downloads_on_created_at" ON "downloads" ("created_at") /*application='CrackSite2'*/[0m
+  [1m[35m (0.2ms)[0m  [1m[35mCREATE INDEX "index_downloads_on_software_id_and_created_at" ON "downloads" ("software_id", "created_at") /*application='CrackSite2'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE INDEX "index_downloads_on_ip_address" ON "downloads" ("ip_address") /*application='CrackSite2'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.0ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ('20250813035019') RETURNING "version" /*application='CrackSite2'*/[0m
+  [1m[36mTRANSACTION (0.7ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='CrackSite2'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.4ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='CrackSite2'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.6ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='CrackSite2'*/[0m
+  [1m[36mCategory Load (0.0ms)[0m  [1m[34mSELECT "categories".* FROM "categories" WHERE "categories"."name" = 'Audio & Music' LIMIT 1 /*application='CrackSite2'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='CrackSite2'*/[0m
+  [1m[36mCategory Exists? (0.0ms)[0m  [1m[34mSELECT 1 AS one FROM "categories" WHERE "categories"."name" = 'Audio & Music' LIMIT 1 /*application='CrackSite2'*/[0m
+  [1m[36mCategory Exists? (0.4ms)[0m  [1m[34mSELECT 1 AS one FROM "categories" WHERE "categories"."slug" = 'audio-music' LIMIT 1 /*application='CrackSite2'*/[0m
+  [1m[36mCategory Create (0.3ms)[0m  [1m[32mINSERT INTO "categories" ("name", "slug", "description", "position", "softwares_count", "created_at", "updated_at") VALUES ('Audio & Music', 'audio-music', '오디오 편집, 음악 제작 및 사운드 관련 소프트웨어', 1, 0, '2025-08-13 05:39:38.649029', '2025-08-13 05:39:38.649029') RETURNING "id" /*application='CrackSite2'*/[0m
+  [1m[36mTRANSACTION (2.3ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='CrackSite2'*/[0m
+  [1m[36mCategory Load (1.3ms)[0m  [1m[34mSELECT "categories".* FROM "categories" WHERE "categories"."name" = 'Graphics & Design' LIMIT 1 /*application='CrackSite2'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='CrackSite2'*/[0m
+  [1m[36mCategory Exists? (0.8ms)[0m  [1m[34mSELECT 1 AS one FROM "categories" WHERE "categories"."name" = 'Graphics & Design' LIMIT 1 /*application='CrackSite2'*/[0m
+  [1m[36mCategory Exists? (0.0ms)[0m  [1m[34mSELECT 1 AS one FROM "categories" WHERE "categories"."slug" = 'graphics-design' LIMIT 1 /*application='CrackSite2'*/[0m
+  [1m[36mCategory Create (0.1ms)[0m  [1m[32mINSERT INTO "categories" ("name", "slug", "description", "position", "softwares_count", "created_at", "updated_at") VALUES ('Graphics & Design', 'graphics-design', '그래픽 디자인, 이미지 편집 및 창작 도구', 2, 0, '2025-08-13 05:39:38.674858', '2025-08-13 05:39:38.674858') RETURNING "id" /*application='CrackSite2'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='CrackSite2'*/[0m
+  [1m[36mCategory Load (0.0ms)[0m  [1m[34mSELECT "categories".* FROM "categories" WHERE "categories"."name" = 'Video Editing' LIMIT 1 /*application='CrackSite2'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='CrackSite2'*/[0m
+  [1m[36mCategory Exists? (3.0ms)[0m  [1m[34mSELECT 1 AS one FROM "categories" WHERE "categories"."name" = 'Video Editing' LIMIT 1 /*application='CrackSite2'*/[0m
+  [1m[36mCategory Exists? (0.0ms)[0m  [1m[34mSELECT 1 AS one FROM "categories" WHERE "categories"."slug" = 'video-editing' LIMIT 1 /*application='CrackSite2'*/[0m
+  [1m[36mCategory Create (0.4ms)[0m  [1m[32mINSERT INTO "categories" ("name", "slug", "description", "position", "softwares_count", "created_at", "updated_at") VALUES ('Video Editing', 'video-editing', '동영상 편집, 영상 제작 및 미디어 처리 소프트웨어', 3, 0, '2025-08-13 05:39:38.692122', '2025-08-13 05:39:38.692122') RETURNING "id" /*application='CrackSite2'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='CrackSite2'*/[0m
+  [1m[36mCategory Load (0.1ms)[0m  [1m[34mSELECT "categories".* FROM "categories" WHERE "categories"."name" = 'Office & Productivity' LIMIT 1 /*application='CrackSite2'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='CrackSite2'*/[0m
+  [1m[36mCategory Exists? (6.8ms)[0m  [1m[34mSELECT 1 AS one FROM "categories" WHERE "categories"."name" = 'Office & Productivity' LIMIT 1 /*application='CrackSite2'*/[0m
+  [1m[36mCategory Exists? (0.0ms)[0m  [1m[34mSELECT 1 AS one FROM "categories" WHERE "categories"."slug" = 'office-productivity' LIMIT 1 /*application='CrackSite2'*/[0m
+  [1m[36mCategory Create (0.1ms)[0m  [1m[32mINSERT INTO "categories" ("name", "slug", "description", "position", "softwares_count", "created_at", "updated_at") VALUES ('Office & Productivity', 'office-productivity', '사무용 소프트웨어 및 생산성 도구', 4, 0, '2025-08-13 05:39:38.709283', '2025-08-13 05:39:38.709283') RETURNING "id" /*application='CrackSite2'*/[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='CrackSite2'*/[0m
+  [1m[36mCategory Load (0.1ms)[0m  [1m[34mSELECT "categories".* FROM "categories" WHERE "categories"."name" = 'Security & Privacy' LIMIT 1 /*application='CrackSite2'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='CrackSite2'*/[0m
+  [1m[36mCategory Exists? (0.9ms)[0m  [1m[34mSELECT 1 AS one FROM "categories" WHERE "categories"."name" = 'Security & Privacy' LIMIT 1 /*application='CrackSite2'*/[0m
+  [1m[36mCategory Exists? (0.0ms)[0m  [1m[34mSELECT 1 AS one FROM "categories" WHERE "categories"."slug" = 'security-privacy' LIMIT 1 /*application='CrackSite2'*/[0m
+  [1m[36mCategory Create (0.3ms)[0m  [1m[32mINSERT INTO "categories" ("name", "slug", "description", "position", "softwares_count", "created_at", "updated_at") VALUES ('Security & Privacy', 'security-privacy', '보안, 프라이버시 및 시스템 보호 도구', 5, 0, '2025-08-13 05:39:38.724249', '2025-08-13 05:39:38.724249') RETURNING "id" /*application='CrackSite2'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='CrackSite2'*/[0m
+  [1m[36mCategory Load (0.2ms)[0m  [1m[34mSELECT "categories".* FROM "categories" WHERE "categories"."name" = 'System Utilities' LIMIT 1 /*application='CrackSite2'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='CrackSite2'*/[0m
+  [1m[36mCategory Exists? (0.7ms)[0m  [1m[34mSELECT 1 AS one FROM "categories" WHERE "categories"."name" = 'System Utilities' LIMIT 1 /*application='CrackSite2'*/[0m
+  [1m[36mCategory Exists? (0.0ms)[0m  [1m[34mSELECT 1 AS one FROM "categories" WHERE "categories"."slug" = 'system-utilities' LIMIT 1 /*application='CrackSite2'*/[0m
+  [1m[36mCategory Create (0.1ms)[0m  [1m[32mINSERT INTO "categories" ("name", "slug", "description", "position", "softwares_count", "created_at", "updated_at") VALUES ('System Utilities', 'system-utilities', '시스템 최적화, 유틸리티 및 관리 도구', 6, 0, '2025-08-13 05:39:38.733681', '2025-08-13 05:39:38.733681') RETURNING "id" /*application='CrackSite2'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='CrackSite2'*/[0m
+  [1m[36mCategory Load (0.0ms)[0m  [1m[34mSELECT "categories".* FROM "categories" WHERE "categories"."name" = 'Games' LIMIT 1 /*application='CrackSite2'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='CrackSite2'*/[0m
+  [1m[36mCategory Exists? (0.6ms)[0m  [1m[34mSELECT 1 AS one FROM "categories" WHERE "categories"."name" = 'Games' LIMIT 1 /*application='CrackSite2'*/[0m
+  [1m[36mCategory Exists? (0.0ms)[0m  [1m[34mSELECT 1 AS one FROM "categories" WHERE "categories"."slug" = 'games' LIMIT 1 /*application='CrackSite2'*/[0m
+  [1m[36mCategory Create (0.0ms)[0m  [1m[32mINSERT INTO "categories" ("name", "slug", "description", "position", "softwares_count", "created_at", "updated_at") VALUES ('Games', 'games', '게임 및 엔터테인먼트 소프트웨어', 7, 0, '2025-08-13 05:39:38.737934', '2025-08-13 05:39:38.737934') RETURNING "id" /*application='CrackSite2'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='CrackSite2'*/[0m
+  [1m[36mCategory Load (0.0ms)[0m  [1m[34mSELECT "categories".* FROM "categories" WHERE "categories"."name" = 'Developer Tools' LIMIT 1 /*application='CrackSite2'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='CrackSite2'*/[0m
+  [1m[36mCategory Exists? (0.6ms)[0m  [1m[34mSELECT 1 AS one FROM "categories" WHERE "categories"."name" = 'Developer Tools' LIMIT 1 /*application='CrackSite2'*/[0m
+  [1m[36mCategory Exists? (0.0ms)[0m  [1m[34mSELECT 1 AS one FROM "categories" WHERE "categories"."slug" = 'developer-tools' LIMIT 1 /*application='CrackSite2'*/[0m
+  [1m[36mCategory Create (0.0ms)[0m  [1m[32mINSERT INTO "categories" ("name", "slug", "description", "position", "softwares_count", "created_at", "updated_at") VALUES ('Developer Tools', 'developer-tools', '개발 도구, IDE 및 프로그래밍 소프트웨어', 8, 0, '2025-08-13 05:39:38.744644', '2025-08-13 05:39:38.744644') RETURNING "id" /*application='CrackSite2'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='CrackSite2'*/[0m
+  [1m[36mCategory Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "categories" /*application='CrackSite2'*/[0m
+  [1m[36mCategory Load (0.1ms)[0m  [1m[34mSELECT "categories".* FROM "categories" ORDER BY "categories"."id" ASC LIMIT 1000 /*application='CrackSite2'*/[0m
+  [1m[36mSoftware Load (0.4ms)[0m  [1m[34mSELECT "softwares".* FROM "softwares" WHERE "softwares"."title" = 'FL Studio Producer Edition' AND "softwares"."category_id" = 1 LIMIT 1 /*application='CrackSite2'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='CrackSite2'*/[0m
+  [1m[36mSoftware Create (0.1ms)[0m  [1m[32mINSERT INTO "softwares" ("title", "description", "version", "developer", "official_site", "file_size", "os_requirements", "published", "downloads_count", "category_id", "created_at", "updated_at") VALUES ('FL Studio Producer Edition', '전문적인 음악 제작을 위한 완전한 소프트웨어 스튜디오. 고급 미디 시퀀싱, 오디오 편집, 믹싱 기능을 제공합니다.', '21.2.0', 'Image-Line', NULL, 506462208, 'Windows 10/11, macOS 12+, Linux', 1, 0, 1, '2025-08-13 05:39:38.888292', '2025-08-13 05:39:38.888292') RETURNING "id" /*application='CrackSite2'*/[0m
+  [1m[36mCategory Update All (0.0ms)[0m  [1m[33mUPDATE "categories" SET "softwares_count" = COALESCE("softwares_count", 0) + 1 WHERE "categories"."id" = 1 /*application='CrackSite2'*/[0m
+  [1m[36mActiveStorage::Attachment Exists? (0.2ms)[0m  [1m[34mSELECT 1 AS one FROM "active_storage_attachments" WHERE "active_storage_attachments"."record_id" = 1 AND "active_storage_attachments"."record_type" = 'Software' AND "active_storage_attachments"."name" = 'screenshots' LIMIT 1 /*application='CrackSite2'*/[0m
+  ↳ app/models/software.rb:65:in 'Software#set_featured_image'
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='CrackSite2'*/[0m
+  [1m[36mSoftware Load (0.1ms)[0m  [1m[34mSELECT "softwares".* FROM "softwares" WHERE "softwares"."title" = 'Adobe Audition' AND "softwares"."category_id" = 1 LIMIT 1 /*application='CrackSite2'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='CrackSite2'*/[0m
+  [1m[36mSoftware Create (0.7ms)[0m  [1m[32mINSERT INTO "softwares" ("title", "description", "version", "developer", "official_site", "file_size", "os_requirements", "published", "downloads_count", "category_id", "created_at", "updated_at") VALUES ('Adobe Audition', '전문가급 오디오 워크스테이션으로 팟캐스트, 음악, 사운드 이펙트 제작에 최적화되어 있습니다.', '2024', 'Adobe Systems', NULL, 499122176, 'Windows 10/11, macOS 12+, Linux', 1, 0, 1, '2025-08-13 05:39:38.913779', '2025-08-13 05:39:38.913779') RETURNING "id" /*application='CrackSite2'*/[0m
+  [1m[36mCategory Update All (0.0ms)[0m  [1m[33mUPDATE "categories" SET "softwares_count" = COALESCE("softwares_count", 0) + 1 WHERE "categories"."id" = 1 /*application='CrackSite2'*/[0m
+  [1m[36mActiveStorage::Attachment Exists? (0.0ms)[0m  [1m[34mSELECT 1 AS one FROM "active_storage_attachments" WHERE "active_storage_attachments"."record_id" = 2 AND "active_storage_attachments"."record_type" = 'Software' AND "active_storage_attachments"."name" = 'screenshots' LIMIT 1 /*application='CrackSite2'*/[0m
+  ↳ app/models/software.rb:65:in 'Software#set_featured_image'
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='CrackSite2'*/[0m
+  [1m[36mSoftware Load (0.1ms)[0m  [1m[34mSELECT "softwares".* FROM "softwares" WHERE "softwares"."title" = 'Adobe Photoshop' AND "softwares"."category_id" = 2 LIMIT 1 /*application='CrackSite2'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='CrackSite2'*/[0m
+  [1m[36mSoftware Create (0.7ms)[0m  [1m[32mINSERT INTO "softwares" ("title", "description", "version", "developer", "official_site", "file_size", "os_requirements", "published", "downloads_count", "category_id", "created_at", "updated_at") VALUES ('Adobe Photoshop', '업계 표준 이미지 편집 소프트웨어. 사진 편집, 그래픽 디자인, 디지털 아트 제작의 모든 기능을 제공합니다.', '2024', 'Adobe Systems', NULL, 108003328, 'Windows 10/11, macOS 12+, Linux', 1, 0, 2, '2025-08-13 05:39:38.928717', '2025-08-13 05:39:38.928717') RETURNING "id" /*application='CrackSite2'*/[0m
+  [1m[36mCategory Update All (0.0ms)[0m  [1m[33mUPDATE "categories" SET "softwares_count" = COALESCE("softwares_count", 0) + 1 WHERE "categories"."id" = 2 /*application='CrackSite2'*/[0m
+  [1m[36mActiveStorage::Attachment Exists? (0.0ms)[0m  [1m[34mSELECT 1 AS one FROM "active_storage_attachments" WHERE "active_storage_attachments"."record_id" = 3 AND "active_storage_attachments"."record_type" = 'Software' AND "active_storage_attachments"."name" = 'screenshots' LIMIT 1 /*application='CrackSite2'*/[0m
+  ↳ app/models/software.rb:65:in 'Software#set_featured_image'
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='CrackSite2'*/[0m
+  [1m[36mSoftware Load (0.1ms)[0m  [1m[34mSELECT "softwares".* FROM "softwares" WHERE "softwares"."title" = 'CorelDRAW Graphics Suite' AND "softwares"."category_id" = 2 LIMIT 1 /*application='CrackSite2'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='CrackSite2'*/[0m
+  [1m[36mSoftware Create (0.8ms)[0m  [1m[32mINSERT INTO "softwares" ("title", "description", "version", "developer", "official_site", "file_size", "os_requirements", "published", "downloads_count", "category_id", "created_at", "updated_at") VALUES ('CorelDRAW Graphics Suite', '벡터 일러스트레이션, 레이아웃, 사진 편집을 위한 종합 그래픽 디자인 소프트웨어입니다.', '2024', 'Corel Corporation', NULL, 499122176, 'Windows 10/11, macOS 12+, Linux', 1, 0, 2, '2025-08-13 05:39:38.938446', '2025-08-13 05:39:38.938446') RETURNING "id" /*application='CrackSite2'*/[0m
+  [1m[36mCategory Update All (0.0ms)[0m  [1m[33mUPDATE "categories" SET "softwares_count" = COALESCE("softwares_count", 0) + 1 WHERE "categories"."id" = 2 /*application='CrackSite2'*/[0m
+  [1m[36mActiveStorage::Attachment Exists? (0.0ms)[0m  [1m[34mSELECT 1 AS one FROM "active_storage_attachments" WHERE "active_storage_attachments"."record_id" = 4 AND "active_storage_attachments"."record_type" = 'Software' AND "active_storage_attachments"."name" = 'screenshots' LIMIT 1 /*application='CrackSite2'*/[0m
+  ↳ app/models/software.rb:65:in 'Software#set_featured_image'
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='CrackSite2'*/[0m
+  [1m[36mSoftware Load (0.1ms)[0m  [1m[34mSELECT "softwares".* FROM "softwares" WHERE "softwares"."title" = 'Adobe Premiere Pro' AND "softwares"."category_id" = 3 LIMIT 1 /*application='CrackSite2'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='CrackSite2'*/[0m
+  [1m[36mSoftware Create (0.6ms)[0m  [1m[32mINSERT INTO "softwares" ("title", "description", "version", "developer", "official_site", "file_size", "os_requirements", "published", "downloads_count", "category_id", "created_at", "updated_at") VALUES ('Adobe Premiere Pro', '전문가를 위한 동영상 편집 소프트웨어. 영화, TV, 웹용 콘텐츠 제작에 사용되는 업계 표준입니다.', '2024', 'Adobe Systems', NULL, 131072000, 'Windows 10/11, macOS 12+, Linux', 1, 0, 3, '2025-08-13 05:39:38.954293', '2025-08-13 05:39:38.954293') RETURNING "id" /*application='CrackSite2'*/[0m
+  [1m[36mCategory Update All (0.0ms)[0m  [1m[33mUPDATE "categories" SET "softwares_count" = COALESCE("softwares_count", 0) + 1 WHERE "categories"."id" = 3 /*application='CrackSite2'*/[0m
+  [1m[36mActiveStorage::Attachment Exists? (0.0ms)[0m  [1m[34mSELECT 1 AS one FROM "active_storage_attachments" WHERE "active_storage_attachments"."record_id" = 5 AND "active_storage_attachments"."record_type" = 'Software' AND "active_storage_attachments"."name" = 'screenshots' LIMIT 1 /*application='CrackSite2'*/[0m
+  ↳ app/models/software.rb:65:in 'Software#set_featured_image'
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='CrackSite2'*/[0m
+  [1m[36mSoftware Load (0.0ms)[0m  [1m[34mSELECT "softwares".* FROM "softwares" WHERE "softwares"."title" = 'Final Cut Pro' AND "softwares"."category_id" = 3 LIMIT 1 /*application='CrackSite2'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='CrackSite2'*/[0m
+  [1m[36mSoftware Create (0.9ms)[0m  [1m[32mINSERT INTO "softwares" ("title", "description", "version", "developer", "official_site", "file_size", "os_requirements", "published", "downloads_count", "category_id", "created_at", "updated_at") VALUES ('Final Cut Pro', 'Mac 전용 프로페셔널 비디오 편집 소프트웨어. 혁신적인 편집 기능과 강력한 미디어 관리를 제공합니다.', '10.7', 'Apple Inc.', NULL, 246415360, 'Windows 10/11, macOS 12+, Linux', 1, 0, 3, '2025-08-13 05:39:38.963978', '2025-08-13 05:39:38.963978') RETURNING "id" /*application='CrackSite2'*/[0m
+  [1m[36mCategory Update All (0.0ms)[0m  [1m[33mUPDATE "categories" SET "softwares_count" = COALESCE("softwares_count", 0) + 1 WHERE "categories"."id" = 3 /*application='CrackSite2'*/[0m
+  [1m[36mActiveStorage::Attachment Exists? (0.0ms)[0m  [1m[34mSELECT 1 AS one FROM "active_storage_attachments" WHERE "active_storage_attachments"."record_id" = 6 AND "active_storage_attachments"."record_type" = 'Software' AND "active_storage_attachments"."name" = 'screenshots' LIMIT 1 /*application='CrackSite2'*/[0m
+  ↳ app/models/software.rb:65:in 'Software#set_featured_image'
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='CrackSite2'*/[0m
+  [1m[36mSoftware Load (0.0ms)[0m  [1m[34mSELECT "softwares".* FROM "softwares" WHERE "softwares"."title" = 'Microsoft Office Professional Plus' AND "softwares"."category_id" = 4 LIMIT 1 /*application='CrackSite2'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='CrackSite2'*/[0m
+  [1m[36mSoftware Create (0.8ms)[0m  [1m[32mINSERT INTO "softwares" ("title", "description", "version", "developer", "official_site", "file_size", "os_requirements", "published", "downloads_count", "category_id", "created_at", "updated_at") VALUES ('Microsoft Office Professional Plus', 'Word, Excel, PowerPoint, Outlook 등을 포함한 완전한 오피스 생산성 제품군입니다.', '2024', 'Microsoft Corporation', NULL, 226492416, 'Windows 10/11, macOS 12+, Linux', 1, 0, 4, '2025-08-13 05:39:38.973417', '2025-08-13 05:39:38.973417') RETURNING "id" /*application='CrackSite2'*/[0m
+  [1m[36mCategory Update All (0.0ms)[0m  [1m[33mUPDATE "categories" SET "softwares_count" = COALESCE("softwares_count", 0) + 1 WHERE "categories"."id" = 4 /*application='CrackSite2'*/[0m
+  [1m[36mActiveStorage::Attachment Exists? (0.0ms)[0m  [1m[34mSELECT 1 AS one FROM "active_storage_attachments" WHERE "active_storage_attachments"."record_id" = 7 AND "active_storage_attachments"."record_type" = 'Software' AND "active_storage_attachments"."name" = 'screenshots' LIMIT 1 /*application='CrackSite2'*/[0m
+  ↳ app/models/software.rb:65:in 'Software#set_featured_image'
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='CrackSite2'*/[0m
+  [1m[36mSoftware Load (0.1ms)[0m  [1m[34mSELECT "softwares".* FROM "softwares" WHERE "softwares"."title" = 'Adobe Acrobat Pro DC' AND "softwares"."category_id" = 4 LIMIT 1 /*application='CrackSite2'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='CrackSite2'*/[0m
+  [1m[36mSoftware Create (0.8ms)[0m  [1m[32mINSERT INTO "softwares" ("title", "description", "version", "developer", "official_site", "file_size", "os_requirements", "published", "downloads_count", "category_id", "created_at", "updated_at") VALUES ('Adobe Acrobat Pro DC', 'PDF 문서 작성, 편집, 서명, 공유를 위한 완전한 솔루션입니다.', '2024', 'Adobe Systems', NULL, 229638144, 'Windows 10/11, macOS 12+, Linux', 1, 0, 4, '2025-08-13 05:39:38.985508', '2025-08-13 05:39:38.985508') RETURNING "id" /*application='CrackSite2'*/[0m
+  [1m[36mCategory Update All (0.0ms)[0m  [1m[33mUPDATE "categories" SET "softwares_count" = COALESCE("softwares_count", 0) + 1 WHERE "categories"."id" = 4 /*application='CrackSite2'*/[0m
+  [1m[36mActiveStorage::Attachment Exists? (0.0ms)[0m  [1m[34mSELECT 1 AS one FROM "active_storage_attachments" WHERE "active_storage_attachments"."record_id" = 8 AND "active_storage_attachments"."record_type" = 'Software' AND "active_storage_attachments"."name" = 'screenshots' LIMIT 1 /*application='CrackSite2'*/[0m
+  ↳ app/models/software.rb:65:in 'Software#set_featured_image'
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='CrackSite2'*/[0m
+  [1m[36mSoftware Load (0.1ms)[0m  [1m[34mSELECT "softwares".* FROM "softwares" WHERE "softwares"."title" = 'Malwarebytes Premium' AND "softwares"."category_id" = 5 LIMIT 1 /*application='CrackSite2'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='CrackSite2'*/[0m
+  [1m[36mSoftware Create (0.6ms)[0m  [1m[32mINSERT INTO "softwares" ("title", "description", "version", "developer", "official_site", "file_size", "os_requirements", "published", "downloads_count", "category_id", "created_at", "updated_at") VALUES ('Malwarebytes Premium', '고급 맬웨어 탐지 및 제거, 실시간 보호 기능을 제공하는 보안 소프트웨어입니다.', '5.0', 'Malwarebytes', NULL, 111149056, 'Windows 10/11, macOS 12+, Linux', 1, 0, 5, '2025-08-13 05:39:38.992023', '2025-08-13 05:39:38.992023') RETURNING "id" /*application='CrackSite2'*/[0m
+  [1m[36mCategory Update All (0.0ms)[0m  [1m[33mUPDATE "categories" SET "softwares_count" = COALESCE("softwares_count", 0) + 1 WHERE "categories"."id" = 5 /*application='CrackSite2'*/[0m
+  [1m[36mActiveStorage::Attachment Exists? (0.0ms)[0m  [1m[34mSELECT 1 AS one FROM "active_storage_attachments" WHERE "active_storage_attachments"."record_id" = 9 AND "active_storage_attachments"."record_type" = 'Software' AND "active_storage_attachments"."name" = 'screenshots' LIMIT 1 /*application='CrackSite2'*/[0m
+  ↳ app/models/software.rb:65:in 'Software#set_featured_image'
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='CrackSite2'*/[0m
+  [1m[36mSoftware Load (0.6ms)[0m  [1m[34mSELECT "softwares".* FROM "softwares" WHERE "softwares"."title" = 'ExpressVPN' AND "softwares"."category_id" = 5 LIMIT 1 /*application='CrackSite2'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='CrackSite2'*/[0m
+  [1m[36mSoftware Create (0.7ms)[0m  [1m[32mINSERT INTO "softwares" ("title", "description", "version", "developer", "official_site", "file_size", "os_requirements", "published", "downloads_count", "category_id", "created_at", "updated_at") VALUES ('ExpressVPN', '빠르고 안전한 VPN 서비스로 온라인 개인정보를 보호하고 지역 제한을 우회할 수 있습니다.', '12.0', 'Express Technologies', NULL, 512753664, 'Windows 10/11, macOS 12+, Linux', 1, 0, 5, '2025-08-13 05:39:38.998462', '2025-08-13 05:39:38.998462') RETURNING "id" /*application='CrackSite2'*/[0m
+  [1m[36mCategory Update All (0.0ms)[0m  [1m[33mUPDATE "categories" SET "softwares_count" = COALESCE("softwares_count", 0) + 1 WHERE "categories"."id" = 5 /*application='CrackSite2'*/[0m
+  [1m[36mActiveStorage::Attachment Exists? (0.1ms)[0m  [1m[34mSELECT 1 AS one FROM "active_storage_attachments" WHERE "active_storage_attachments"."record_id" = 10 AND "active_storage_attachments"."record_type" = 'Software' AND "active_storage_attachments"."name" = 'screenshots' LIMIT 1 /*application='CrackSite2'*/[0m
+  ↳ app/models/software.rb:65:in 'Software#set_featured_image'
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='CrackSite2'*/[0m
+  [1m[36mSoftware Load (0.0ms)[0m  [1m[34mSELECT "softwares".* FROM "softwares" WHERE "softwares"."title" = 'CCleaner Professional' AND "softwares"."category_id" = 6 LIMIT 1 /*application='CrackSite2'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='CrackSite2'*/[0m
+  [1m[36mSoftware Create (0.6ms)[0m  [1m[32mINSERT INTO "softwares" ("title", "description", "version", "developer", "official_site", "file_size", "os_requirements", "published", "downloads_count", "category_id", "created_at", "updated_at") VALUES ('CCleaner Professional', '시스템 정리, 레지스트리 최적화, 성능 향상을 위한 종합 시스템 유틸리티입니다.', '6.20', 'Piriform', NULL, 483393536, 'Windows 10/11, macOS 12+, Linux', 1, 0, 6, '2025-08-13 05:39:39.016006', '2025-08-13 05:39:39.016006') RETURNING "id" /*application='CrackSite2'*/[0m
+  [1m[36mCategory Update All (0.0ms)[0m  [1m[33mUPDATE "categories" SET "softwares_count" = COALESCE("softwares_count", 0) + 1 WHERE "categories"."id" = 6 /*application='CrackSite2'*/[0m
+  [1m[36mActiveStorage::Attachment Exists? (0.0ms)[0m  [1m[34mSELECT 1 AS one FROM "active_storage_attachments" WHERE "active_storage_attachments"."record_id" = 11 AND "active_storage_attachments"."record_type" = 'Software' AND "active_storage_attachments"."name" = 'screenshots' LIMIT 1 /*application='CrackSite2'*/[0m
+  ↳ app/models/software.rb:65:in 'Software#set_featured_image'
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='CrackSite2'*/[0m
+  [1m[36mSoftware Load (0.0ms)[0m  [1m[34mSELECT "softwares".* FROM "softwares" WHERE "softwares"."title" = 'IObit Advanced SystemCare' AND "softwares"."category_id" = 6 LIMIT 1 /*application='CrackSite2'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='CrackSite2'*/[0m
+  [1m[36mSoftware Create (0.8ms)[0m  [1m[32mINSERT INTO "softwares" ("title", "description", "version", "developer", "official_site", "file_size", "os_requirements", "published", "downloads_count", "category_id", "created_at", "updated_at") VALUES ('IObit Advanced SystemCare', 'PC 최적화, 정리, 보안을 위한 올인원 시스템 관리 도구입니다.', '17.0', 'IObit', NULL, 452984832, 'Windows 10/11, macOS 12+, Linux', 1, 0, 6, '2025-08-13 05:39:39.023214', '2025-08-13 05:39:39.023214') RETURNING "id" /*application='CrackSite2'*/[0m
+  [1m[36mCategory Update All (0.0ms)[0m  [1m[33mUPDATE "categories" SET "softwares_count" = COALESCE("softwares_count", 0) + 1 WHERE "categories"."id" = 6 /*application='CrackSite2'*/[0m
+  [1m[36mActiveStorage::Attachment Exists? (0.0ms)[0m  [1m[34mSELECT 1 AS one FROM "active_storage_attachments" WHERE "active_storage_attachments"."record_id" = 12 AND "active_storage_attachments"."record_type" = 'Software' AND "active_storage_attachments"."name" = 'screenshots' LIMIT 1 /*application='CrackSite2'*/[0m
+  ↳ app/models/software.rb:65:in 'Software#set_featured_image'
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='CrackSite2'*/[0m
+  [1m[36mSoftware Load (0.1ms)[0m  [1m[34mSELECT "softwares".* FROM "softwares" WHERE "softwares"."title" = 'Steam' AND "softwares"."category_id" = 7 LIMIT 1 /*application='CrackSite2'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='CrackSite2'*/[0m
+  [1m[36mSoftware Create (2.4ms)[0m  [1m[32mINSERT INTO "softwares" ("title", "description", "version", "developer", "official_site", "file_size", "os_requirements", "published", "downloads_count", "category_id", "created_at", "updated_at") VALUES ('Steam', 'PC 게임 플랫폼의 표준. 수천 개의 게임과 커뮤니티 기능을 제공합니다.', 'Latest', 'Valve Corporation', NULL, 492830720, 'Windows 10/11, macOS 12+, Linux', 1, 0, 7, '2025-08-13 05:39:39.034753', '2025-08-13 05:39:39.034753') RETURNING "id" /*application='CrackSite2'*/[0m
+  [1m[36mCategory Update All (0.1ms)[0m  [1m[33mUPDATE "categories" SET "softwares_count" = COALESCE("softwares_count", 0) + 1 WHERE "categories"."id" = 7 /*application='CrackSite2'*/[0m
+  [1m[36mActiveStorage::Attachment Exists? (0.7ms)[0m  [1m[34mSELECT 1 AS one FROM "active_storage_attachments" WHERE "active_storage_attachments"."record_id" = 13 AND "active_storage_attachments"."record_type" = 'Software' AND "active_storage_attachments"."name" = 'screenshots' LIMIT 1 /*application='CrackSite2'*/[0m
+  ↳ app/models/software.rb:65:in 'Software#set_featured_image'
+  [1m[36mTRANSACTION (1.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='CrackSite2'*/[0m
+  [1m[36mSoftware Load (0.2ms)[0m  [1m[34mSELECT "softwares".* FROM "softwares" WHERE "softwares"."title" = 'Epic Games Launcher' AND "softwares"."category_id" = 7 LIMIT 1 /*application='CrackSite2'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='CrackSite2'*/[0m
+  [1m[36mSoftware Create (1.7ms)[0m  [1m[32mINSERT INTO "softwares" ("title", "description", "version", "developer", "official_site", "file_size", "os_requirements", "published", "downloads_count", "category_id", "created_at", "updated_at") VALUES ('Epic Games Launcher', 'Fortnite, Unreal Engine 게임들과 매주 무료 게임을 제공하는 게임 런처입니다.', 'Latest', 'Epic Games', NULL, 420478976, 'Windows 10/11, macOS 12+, Linux', 1, 0, 7, '2025-08-13 05:39:39.061046', '2025-08-13 05:39:39.061046') RETURNING "id" /*application='CrackSite2'*/[0m
+  [1m[36mCategory Update All (0.1ms)[0m  [1m[33mUPDATE "categories" SET "softwares_count" = COALESCE("softwares_count", 0) + 1 WHERE "categories"."id" = 7 /*application='CrackSite2'*/[0m
+  [1m[36mActiveStorage::Attachment Exists? (0.1ms)[0m  [1m[34mSELECT 1 AS one FROM "active_storage_attachments" WHERE "active_storage_attachments"."record_id" = 14 AND "active_storage_attachments"."record_type" = 'Software' AND "active_storage_attachments"."name" = 'screenshots' LIMIT 1 /*application='CrackSite2'*/[0m
+  ↳ app/models/software.rb:65:in 'Software#set_featured_image'
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='CrackSite2'*/[0m
+  [1m[36mSoftware Load (0.1ms)[0m  [1m[34mSELECT "softwares".* FROM "softwares" WHERE "softwares"."title" = 'JetBrains IntelliJ IDEA Ultimate' AND "softwares"."category_id" = 8 LIMIT 1 /*application='CrackSite2'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='CrackSite2'*/[0m
+  [1m[36mSoftware Create (1.5ms)[0m  [1m[32mINSERT INTO "softwares" ("title", "description", "version", "developer", "official_site", "file_size", "os_requirements", "published", "downloads_count", "category_id", "created_at", "updated_at") VALUES ('JetBrains IntelliJ IDEA Ultimate', 'Java 및 다중 언어 개발을 위한 강력한 통합 개발 환경입니다.', '2024.1', 'JetBrains', NULL, 381681664, 'Windows 10/11, macOS 12+, Linux', 1, 0, 8, '2025-08-13 05:39:39.073332', '2025-08-13 05:39:39.073332') RETURNING "id" /*application='CrackSite2'*/[0m
+  [1m[36mCategory Update All (0.0ms)[0m  [1m[33mUPDATE "categories" SET "softwares_count" = COALESCE("softwares_count", 0) + 1 WHERE "categories"."id" = 8 /*application='CrackSite2'*/[0m
+  [1m[36mActiveStorage::Attachment Exists? (0.0ms)[0m  [1m[34mSELECT 1 AS one FROM "active_storage_attachments" WHERE "active_storage_attachments"."record_id" = 15 AND "active_storage_attachments"."record_type" = 'Software' AND "active_storage_attachments"."name" = 'screenshots' LIMIT 1 /*application='CrackSite2'*/[0m
+  ↳ app/models/software.rb:65:in 'Software#set_featured_image'
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='CrackSite2'*/[0m
+  [1m[36mSoftware Load (0.0ms)[0m  [1m[34mSELECT "softwares".* FROM "softwares" WHERE "softwares"."title" = 'Microsoft Visual Studio Professional' AND "softwares"."category_id" = 8 LIMIT 1 /*application='CrackSite2'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='CrackSite2'*/[0m
+  [1m[36mSoftware Create (1.6ms)[0m  [1m[32mINSERT INTO "softwares" ("title", "description", "version", "developer", "official_site", "file_size", "os_requirements", "published", "downloads_count", "category_id", "created_at", "updated_at") VALUES ('Microsoft Visual Studio Professional', 'Windows, 웹, 모바일 앱 개발을 위한 완전한 개발 도구입니다.', '2022', 'Microsoft Corporation', NULL, 439353344, 'Windows 10/11, macOS 12+, Linux', 1, 0, 8, '2025-08-13 05:39:39.083082', '2025-08-13 05:39:39.083082') RETURNING "id" /*application='CrackSite2'*/[0m
+  [1m[36mCategory Update All (0.0ms)[0m  [1m[33mUPDATE "categories" SET "softwares_count" = COALESCE("softwares_count", 0) + 1 WHERE "categories"."id" = 8 /*application='CrackSite2'*/[0m
+  [1m[36mActiveStorage::Attachment Exists? (0.0ms)[0m  [1m[34mSELECT 1 AS one FROM "active_storage_attachments" WHERE "active_storage_attachments"."record_id" = 16 AND "active_storage_attachments"."record_type" = 'Software' AND "active_storage_attachments"."name" = 'screenshots' LIMIT 1 /*application='CrackSite2'*/[0m
+  ↳ app/models/software.rb:65:in 'Software#set_featured_image'
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='CrackSite2'*/[0m
+  [1m[36mSoftware Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "softwares" /*application='CrackSite2'*/[0m
+  [1m[36mCategory Count (2.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "categories" /*application='CrackSite2'*/[0m
+  [1m[36mSoftware Count (0.5ms)[0m  [1m[34mSELECT COUNT(*) FROM "softwares" /*application='CrackSite2'*/[0m
+  [1m[36mSoftware Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "softwares" WHERE "softwares"."published" = 1 /*application='CrackSite2'*/[0m
+  [1m[36mCategory Load (0.1ms)[0m  [1m[34mSELECT "categories".* FROM "categories" /*application='CrackSite2'*/[0m
+  [1m[36mSoftware Load (0.3ms)[0m  [1m[34mSELECT "softwares".* FROM "softwares" WHERE "softwares"."category_id" IN (1, 2, 3, 4, 5, 6, 7, 8) /*application='CrackSite2'*/[0m
+  [1m[36mSoftware Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "softwares" WHERE "softwares"."category_id" = 1 /*application='CrackSite2'*/[0m
+  [1m[36mSoftware Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "softwares" WHERE "softwares"."category_id" = 2 /*application='CrackSite2'*/[0m
+  [1m[36mSoftware Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "softwares" WHERE "softwares"."category_id" = 3 /*application='CrackSite2'*/[0m
+  [1m[36mSoftware Count (0.1ms)[0m  [1m[34mSELECT COUNT(*) FROM "softwares" WHERE "softwares"."category_id" = 4 /*application='CrackSite2'*/[0m
+  [1m[36mSoftware Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "softwares" WHERE "softwares"."category_id" = 5 /*application='CrackSite2'*/[0m
+  [1m[36mSoftware Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "softwares" WHERE "softwares"."category_id" = 6 /*application='CrackSite2'*/[0m
+  [1m[36mSoftware Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "softwares" WHERE "softwares"."category_id" = 7 /*application='CrackSite2'*/[0m
+  [1m[36mSoftware Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "softwares" WHERE "softwares"."category_id" = 8 /*application='CrackSite2'*/[0m
