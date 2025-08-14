@@ -50,3 +50,5 @@ app/assets/builds/*.map
 
 
 *.log
+
+/config/master.key
