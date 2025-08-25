@@ -48,18 +48,7 @@ class Software < ApplicationRecord
   def acceptable_install_files
     return unless install_files.attached?
     
-    allowed_types = [
-      'application/zip',
-      'application/x-rar-compressed', 
-      'application/x-7z-compressed',
-      'application/octet-stream'
-    ]
-    
     install_files.each do |file|
-      unless file.blob.content_type.in?(allowed_types)
-        errors.add(:install_files, 'must be ZIP, RAR, or 7Z')
-      end
-      
       if file.blob.byte_size > 500.megabytes
         errors.add(:install_files, 'must be less than 500MB')
       end

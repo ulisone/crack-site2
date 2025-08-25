@@ -109,10 +109,12 @@
                     <%= image_tag screenshot.variant(resize_to_fill: [150, 100]), 
                         alt: "Screenshot", 
                         class: "w-full h-24 object-cover rounded border border-gray-600" %>
-                    <%= button_to "×", remove_attachment_admin_software_path(software, screenshot.signed_id), 
-                        method: :delete,
-                        data: { confirm: "Remove this screenshot?" },
-                        class: "absolute top-1 right-1 bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity border-0 cursor-pointer" %>
+                    <% if screenshot.persisted? %>
+                      <%= button_to "×", remove_attachment_admin_software_path(software, screenshot.signed_id), 
+                          method: :delete,
+                          data: { confirm: "Remove this screenshot?" },
+                          class: "absolute top-1 right-1 bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity border-0 cursor-pointer" %>
+                    <% end %>
                   </div>
                 <% end %>
               </div>
