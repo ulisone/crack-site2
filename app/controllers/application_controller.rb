@@ -1,13 +1,14 @@
 class ApplicationController < ActionController::Base
-  # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
-  allow_browser versions: :modern
-  
   protect_from_forgery with: :exception
   
-  before_action :load_categories
+  before_action :load_categories, :set_default_response_format
   
   private
   
+  def set_default_response_format
+    request.format = :html if request.format == "*/*" || request.format.nil?
+  end
+
   def load_categories
     @categories = Category.includes(:softwares).ordered
   end

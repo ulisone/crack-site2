@@ -21,8 +21,8 @@ end
 
 puts "Created #{Category.count} categories"
 
-# 샘플 소프트웨어 생성 (개발용)
-if Rails.env.development?
+# 샘플 소프트웨어 생성 (데모용)
+if Rails.env.development? || Rails.env.production?
   puts "Creating sample software entries..."
   
   Category.find_each do |category|

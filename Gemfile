@@ -71,3 +71,5 @@ end
 group :production do
   gem "pg"
 end
+
+gem "pry-byebug", "~> 3.11", group: :development
