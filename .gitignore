@@ -47,8 +47,5 @@ config/credentials/*.key
 
 # Tailwind builds source maps (keep built CSS tracked)
 app/assets/builds/*.map
-
-
 *.log
-
 /config/master.key

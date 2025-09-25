@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get "calculator/index"
   # Software Crackz Routes
   root 'softwares#index'
   

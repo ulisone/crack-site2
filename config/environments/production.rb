@@ -82,9 +82,12 @@ Rails.application.configure do
   config.active_record.attributes_for_inspect = [ :id ]
 
   # Enable DNS rebinding protection and other `Host` header attacks.
-  # Allow Tor hidden service hostname
+  # Allow Tor hidden service hostname and local development
   config.hosts = [
-    /.*\.onion/  # Allow any .onion domain
+    /.*\.onion/,  # Allow any .onion domain
+    "rails:3000", # Docker container hostname
+    "localhost",  # Local testing
+    "127.0.0.1"   # Local IP
   ]
   #
   # Skip DNS rebinding protection for the default health check endpoint.
